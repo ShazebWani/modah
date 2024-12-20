@@ -1,27 +1,26 @@
-import React, { useState } from "react";
-import { Stack } from "expo-router";
 import SplashScreen from "./_splash";
-import { useFonts } from "expo-font";
-import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import { Slot, Stack, useRouter } from "expo-router";
 
 export default function RootLayout() {
-  const router = useRouter();
+    const [showSplash, setShowSplash] = useState(true);
+    const router = useRouter(); // Use router to navigate programmatically
 
-  const [animationCompleted, setAnimationCompleted] = useState(false);
+    const handleAnimationFinish = () => {
+        setShowSplash(false);
+        router.replace("/auth/signIn"); // Navigate to the sign-in screen
+    };
 
-  const handleAnimationFinish = () => {
-    setAnimationCompleted(true);
-    router.replace("/auth/signIn"); // Navigate to sign-in screen
-  };
-
-  if (!animationCompleted) {
-    return <SplashScreen onFinish={handleAnimationFinish} />;
-  }
-
-  return (
-      <Stack>
-        <Stack.Screen name="auth" options={{ headerShown: false }} />
-        <Stack.Screen name="tabs" options={{ headerShown: false }} />
-      </Stack>
-  );
+    return (
+        <>
+            {showSplash ? (
+                <SplashScreen onFinish={handleAnimationFinish} />
+            ) : (
+                <Stack>
+                    <Stack.Screen name="auth" options={{ headerShown: false }} />
+                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                </Stack>
+            )}
+        </>
+    );
 }
