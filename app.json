@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "modah_final",
-    "slug": "modah_final",
+    "name": "modah",
+    "slug": "modah",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "modah",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -20,7 +20,14 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "routing": {
+        "strictMode": true
+      }
+    },
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
     },
     "plugins": [
       "expo-router",
