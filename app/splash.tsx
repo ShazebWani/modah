@@ -18,6 +18,7 @@ const SplashScreen: FunctionComponent<Props> = ({onFinish}) => {
                 style={styles.logo}
                 resizeMode="contain"
             />
+            
             <LottieView
                 source={require('../assets/lottie/splash.json')}
                 autoPlay
