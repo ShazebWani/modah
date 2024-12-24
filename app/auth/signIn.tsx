@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import {
-    View,
     Text,
     TextInput,
     Pressable,
     StyleSheet,
-    TouchableWithoutFeedback,
+    View,
+    Image,
     Keyboard,
+    TouchableWithoutFeedback,
+    ScrollView,
+    KeyboardAvoidingView,
+    Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 export default function SignIn() {
@@ -21,45 +27,100 @@ export default function SignIn() {
         }
     };
 
-    const navigateToSignUp = () => {
-        router.push('/auth/signUp');
-    };
-    //background: linear-gradient(90deg, #FDBB2D 0%, #3A1C71 100%);
+    const handleGoogleSignIn = async () => {
+        alert('Google Sign-In clicked');
+        router.replace('/(tabs)');
+    }
+    const handleFacebookSignIn = async() => {
+        alert('Facebook Sign-In clicked');
+        router.replace('/(tabs)');
+    }
+
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <LinearGradient
-                colors={['#f69f6a', '#ff7928']} // Add gradient colors here
-                style={styles.container}
+            <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             >
-                <Text style={styles.title}>Sign In</Text>
+                <SafeAreaView style={styles.container}>
+                    <ScrollView contentContainerStyle={styles.scrollContent}>
+                        {/* Banner */}
+                        <View style={styles.bannerContainer}>
+                            <Image
+                                source={require('../../assets/images/SignUpImage.png')}
+                                style={styles.banner}
+                                resizeMode="cover"
+                            />
+                        </View>
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Email"
-                    placeholderTextColor="#d8d8d8"
-                    value={email}
-                    onChangeText={setEmail}
-                    autoCapitalize="none"
-                    keyboardType="email-address"
-                />
+                        {/* Content */}
+                        <View style={styles.contentContainer}>
+                            <Text style={styles.title}>Login</Text>
+                            <Text style={styles.subtitle}>Please sign in to continue.</Text>
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Password"
-                    placeholderTextColor="#d8d8d8"
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry
-                />
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="mail-outline" size={24} color="#a0a0a0" />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Email"
+                                    placeholderTextColor="#a0a0a0"
+                                    value={email}
+                                    onChangeText={setEmail}
+                                    autoCapitalize="none"
+                                    keyboardType="email-address"
+                                />
+                            </View>
 
-                <Pressable style={styles.button} onPress={handleSignIn}>
-                    <Text style={styles.buttonText}>Sign In</Text>
-                </Pressable>
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="lock-closed-outline" size={24} color="#a0a0a0" />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Password"
+                                    placeholderTextColor="#a0a0a0"
+                                    value={password}
+                                    onChangeText={setPassword}
+                                    secureTextEntry
+                                />
+                                <Pressable onPress={() => alert('Forgot Password?')}>
+                                    <Text style={styles.forgotText}>Forgot</Text>
+                                </Pressable>
+                            </View>
 
-                <Pressable style={styles.linkButton} onPress={navigateToSignUp}>
-                    <Text style={styles.linkText}>Don't have an account? Sign Up</Text>
-                </Pressable>
-            </LinearGradient>
+                            <LinearGradient
+                                colors={['#72521f', '#f8e5c2']}
+                                style={styles.gradientButton}
+                            >
+                                <Pressable style={styles.buttonContent} onPress={handleSignIn}>
+                                    <Text style={styles.buttonText}>LOGIN</Text>
+                                </Pressable>
+                            </LinearGradient>
+
+                            {/* OR Text */}
+                            <Text style={styles.orText}>or</Text>
+
+                            {/* Social Buttons */}
+                            <View style={styles.socialButtonsContainer}>
+                                <Pressable style={styles.socialButton} onPress={handleGoogleSignIn}>
+                                    <Ionicons name="logo-google" size={24} color="#fff" />
+                                    <Text style={styles.socialButtonText}>Google</Text>
+                                </Pressable>
+
+                                <Pressable style={styles.socialButton} onPress={handleFacebookSignIn}>
+                                    <Ionicons name="logo-facebook" size={24} color="#fff" />
+                                    <Text style={styles.socialButtonText}>Facebook</Text>
+                                </Pressable>
+                            </View>
+
+                            <View style={styles.footer}>
+                                <Text style={styles.footerText}>Don’t have an account? </Text>
+                                <Pressable onPress={() => router.push('/auth/signUp')}>
+                                    <Text style={styles.signUpText}>Sign up</Text>
+                                </Pressable>
+                            </View>
+                        </View>
+                    </ScrollView>
+                </SafeAreaView>
+            </KeyboardAvoidingView>
         </TouchableWithoutFeedback>
     );
 }
@@ -67,45 +128,105 @@ export default function SignIn() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
+        backgroundColor: '#ECECEC',
+    },
+    scrollContent: {
+        flexGrow: 1,
+    },
+    bannerContainer: {
+        width: '100%',
+        backgroundColor: '#ECECEC',
+    },
+    banner: {
+        width: '100%',
+        height: 200,
+        marginBottom: 20,
+    },
+    contentContainer: {
         padding: 20,
     },
     title: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 'bold',
-        marginBottom: 20,
-        textAlign: 'center',
-        color: '#9d07f3', // Adjust for visibility on gradient
+        color: '#000',
+        marginBottom: 10,
+    },
+    subtitle: {
+        fontSize: 16,
+        color: '#a0a0a0',
+        marginBottom: 40,
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#e0e0e0',
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        marginBottom: 15,
+        backgroundColor: '#fff',
     },
     input: {
+        flex: 1,
         height: 50,
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 8,
-        marginBottom: 15,
-        paddingHorizontal: 15,
-        backgroundColor: '#ffffff',
+        fontSize: 16,
     },
-    button: {
-        backgroundColor: '#ff6d16',
+    forgotText: {
+        fontSize: 12,
+        color: '#c2a366',
+    },
+    gradientButton: {
+        borderRadius: 25,
+        marginTop: 10,
+    },
+    buttonContent: {
         height: 50,
-        borderRadius: 8,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 10,
     },
     buttonText: {
         color: '#fff',
         fontSize: 16,
         fontWeight: '600',
     },
-    linkButton: {
-        marginTop: 15,
-        padding: 10,
-    },
-    linkText: {
-        color: '#9d07f3',
+    orText: {
         textAlign: 'center',
+        marginVertical: 20,
         fontSize: 14,
+        color: '#a0a0a0',
+    },
+    socialButtonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 20,
+    },
+    socialButton: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#a0a0a0',
+        borderRadius: 10,
+        paddingVertical: 10,
+        marginHorizontal: 5,
+    },
+    socialButtonText: {
+        color: '#fff',
+        fontSize: 14,
+        marginLeft: 5,
+    },
+    footer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginTop: 60,
+    },
+    footerText: {
+        fontSize: 14,
+        color: '#a0a0a0',
+    },
+    signUpText: {
+        fontSize: 14,
+        color: '#c2a366',
+        fontWeight: 'bold',
     },
 });

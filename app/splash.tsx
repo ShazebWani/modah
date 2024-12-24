@@ -14,7 +14,7 @@ const SplashScreen: FunctionComponent<Props> = ({onFinish}) => {
     return (
         <View style={styles.container}>
             <Image
-                source={require('../assets/images/icon.png')}
+                source={require('../assets/images/splash_logo.png')}
                 style={styles.logo}
                 resizeMode="contain"
             />
@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     lottie: {
         width: '100%',
         height: '100%',
+        marginBottom: 100,
     },
 });
 
