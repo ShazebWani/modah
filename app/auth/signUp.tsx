@@ -10,7 +10,7 @@ import {
     TouchableWithoutFeedback,
     Platform,
     ScrollView,
-    KeyboardAvoidingView,
+    KeyboardAvoidingView, StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -40,6 +40,8 @@ export default function SignUp() {
         alert('Facebook Sign-In clicked');
         router.replace('/(tabs)');
     }
+
+    StatusBar.setBarStyle('dark-content');
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -145,7 +147,7 @@ export default function SignUp() {
                             <View style={styles.footer}>
                                 <Text style={styles.footerText}>Already have an account? </Text>
                                 <Pressable onPress={() => router.push('/auth/signIn')}>
-                                    <Text style={styles.signInText}>Sign in</Text>
+                                    <Text style={styles.signInText}>Log In</Text>
                                 </Pressable>
                             </View>
                         </View>

@@ -34,5 +34,5 @@ export default function Index() {
     }
 
     // Redirect to auth by default
-    return <Redirect href="/auth/signIn" />;
+    return <Redirect href="/auth/choice" />;
 }
