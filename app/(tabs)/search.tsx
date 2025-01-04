@@ -7,30 +7,25 @@ import {
     Pressable,
     ScrollView,
     Image,
+    Keyboard,
+    TouchableWithoutFeedback,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
-const mockPosts = [
-    {
-        id: 1,
-        images: [require('../../assets/images/seller1.png')],
-        price: '$20',
-        size: 'M',
-    },
-    {
-        id: 2,
-        images: [require('../../assets/images/seller2.png')],
-        price: '$15',
-        size: 'S',
-    },
-    {
-        id: 3,
-        images: [require('../../assets/images/seller3.png')],
-        price: '$25',
-        size: 'L',
-    },
+const suggestedImages = [
+    require('../../assets/images/item1.png'),
+    require('../../assets/images/itemDefault.png'),
+];
+
+const recentlyViewedImages = [
+    require('../../assets/images/item1.png'),
+    require('../../assets/images/itemDefault.png'),
+    require('../../assets/images/itemDefault.png'),
+    require('../../assets/images/itemDefault.png'),
+    require('../../assets/images/itemDefault.png'),
+    require('../../assets/images/itemDefault.png'),
 ];
 
 export default function Search() {
@@ -44,67 +39,115 @@ export default function Search() {
     };
 
     return (
-        <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-            <ScrollView>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
                 {/* Search Bar */}
                 <View style={styles.searchBarContainer}>
-                    <Ionicons name="search" size={20} color="#a0a0a0" />
-                    <TextInput
-                        style={styles.searchInput}
-                        placeholder="Search for items"
-                        placeholderTextColor="#a0a0a0"
-                    />
+                    <View style={styles.searchInputWrapper}>
+                        <Ionicons name="search" size={20} color="#a0a0a0" />
+                        <TextInput
+                            style={styles.searchInput}
+                            placeholder="Search for items"
+                            placeholderTextColor="#a0a0a0"
+                        />
+                    </View>
+                    <Pressable onPress={() => router.push('/(tabs)/bag')}>
+                        <Ionicons name="bag-outline" size={24} color="#000" />
+                    </Pressable>
                 </View>
 
-                {/* Posts Section */}
-                <View style={styles.postsContainer}>
-                    {mockPosts.map((post) => (
-                        <Pressable
-                            key={post.id}
-                            style={styles.post}
-                            onPress={() => router.push(`/items/${post.id}`)}
-                        >
-                            <Image
-                                source={post.images[0]}
-                                style={styles.postImage}
-                                resizeMode="cover"
-                            />
-                            <Pressable
-                                style={styles.heartButton}
-                                onPress={() => toggleLike(post.id)}
-                            >
-                                <Ionicons
-                                    name={likedPosts.includes(post.id) ? 'heart' : 'heart-outline'}
-                                    size={24}
-                                    color={likedPosts.includes(post.id) ? 'red' : '#000'}
-                                />
+                {/* Main Content */}
+                <ScrollView>
+                    {/* Suggested for You */}
+                    <View style={styles.suggestedContainer}>
+                        <View style={styles.sectionHeader}>
+                            <Text style={styles.sectionTitle}>Suggested for You</Text>
+                            <Pressable onPress={() => router.push('/searchpages/suggested/seeAll')}>
+                                <Text style={styles.seeAllText}>See All</Text>
                             </Pressable>
-                            <Text style={styles.postDetails}>{`${post.price} | Size: ${post.size}`}</Text>
-                        </Pressable>
-                    ))}
-                </View>
+                        </View>
+                        <View style={styles.suggestedImages}>
+                            {suggestedImages.map((image, index) => (
+                                <Pressable
+                                    key={index}
+                                    style={styles.suggestedImageWrapper}
+                                    onPress={() => router.push(`/items/${index + 1}`)} // Navigate dynamically
+                                >
+                                    <Image
+                                        source={image}
+                                        style={styles.suggestedImage}
+                                        resizeMode="cover"
+                                    />
+                                    <Pressable
+                                        style={styles.heartButton}
+                                        onPress={() => toggleLike(`suggested-${index}`)}
+                                    >
+                                        <Ionicons
+                                            name={
+                                                likedPosts.includes(`suggested-${index}`)
+                                                    ? 'heart'
+                                                    : 'heart-outline'
+                                            }
+                                            size={18}
+                                            color={
+                                                likedPosts.includes(`suggested-${index}`)
+                                                    ? 'red'
+                                                    : '#000'
+                                            }
+                                        />
+                                    </Pressable>
+                                </Pressable>
+                            ))}
+                        </View>
+                    </View>
 
-                {/* Recently Viewed Slider */}
-                <View style={styles.recentlyViewedContainer}>
-                    <Text style={styles.sectionHeader}>Recently Viewed</Text>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                        {mockPosts.map((post) => (
-                            <Pressable
-                                key={`recent-${post.id}`}
-                                style={styles.recentPost}
-                                onPress={() => router.push(`/items/${post.id}`)}
-                            >
-                                <Image
-                                    source={post.images[0]}
-                                    style={styles.recentPostImage}
-                                    resizeMode="cover"
-                                />
+                    {/* Recently Viewed */}
+                    <View style={styles.recentlyViewedContainer}>
+                        <View style={styles.sectionHeader}>
+                            <Text style={styles.sectionTitle}>Recently Viewed</Text>
+                            <Pressable onPress={() => router.push('/searchpages/recentlyViewed/seeAll')}>
+                                <Text style={styles.seeAllText}>See All</Text>
                             </Pressable>
-                        ))}
-                    </ScrollView>
-                </View>
-            </ScrollView>
-        </SafeAreaView>
+                        </View>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                            <View style={styles.recentlyViewedGrid}>
+                                {recentlyViewedImages.map((image, index) => (
+                                    <Pressable
+                                        key={index}
+                                        style={styles.recentlyViewedBox}
+                                        onPress={() => router.push(`/items/${index + 1}`)} // Navigate dynamically
+                                    >
+                                        <Image
+                                            source={image}
+                                            style={styles.recentlyViewedImage}
+                                            resizeMode="cover"
+                                        />
+                                        <Pressable
+                                            style={styles.heartButton}
+                                            onPress={() => toggleLike(`recentlyViewed-${index}`)}
+                                        >
+                                            <Ionicons
+                                                name={
+                                                    likedPosts.includes(`recentlyViewed-${index}`)
+                                                        ? 'heart'
+                                                        : 'heart-outline'
+                                                }
+                                                size={18}
+                                                color={
+                                                    likedPosts.includes(`recentlyViewed-${index}`)
+                                                        ? 'red'
+                                                        : '#000'
+                                                }
+                                            />
+                                        </Pressable>
+                                    </Pressable>
+                                ))}
+                            </View>
+                        </ScrollView>
+                    </View>
+                </ScrollView>
+            </SafeAreaView>
+        </TouchableWithoutFeedback>
     );
 }
 
@@ -117,11 +160,17 @@ const styles = StyleSheet.create({
     searchBarContainer: {
         flexDirection: 'row',
         alignItems: 'center',
+        marginBottom: 16,
+    },
+    searchInputWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
         backgroundColor: '#fff',
         borderRadius: 10,
         paddingHorizontal: 10,
         paddingVertical: 5,
-        marginBottom: 15,
+        flex: 1,
+        marginRight: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -132,44 +181,70 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         fontSize: 16,
     },
-    postsContainer: {
+    suggestedContainer: {
+        flex: 1,
         marginBottom: 20,
     },
-    post: {
-        marginBottom: 20,
+    sectionHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    seeAllText: {
+        fontSize: 14,
+        color: 'rgba(194,163,102,0.86)',
+    },
+    suggestedImages: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    suggestedImageWrapper: {
+        position: 'relative',
+        width: '49%',
+        height: 225,
         borderRadius: 10,
         overflow: 'hidden',
-        backgroundColor: '#fff',
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: '#d3d3d3',
     },
-    postImage: {
+    suggestedImage: {
         width: '100%',
-        height: 200,
+        height: 225,
+    },
+    recentlyViewedContainer: {
+        flex: 1,
+    },
+    recentlyViewedGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        width: 500,
+    },
+    recentlyViewedBox: {
+        width: 150,
+        height: 150,
+        marginHorizontal: 5,
+        marginVertical: 5,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#d3d3d3',
+        position: 'relative',
+    },
+    recentlyViewedImage: {
+        width: '100%',
+        height: '100%',
     },
     heartButton: {
         position: 'absolute',
-        top: 10,
-        right: 10,
-    },
-    postDetails: {
-        padding: 10,
-        fontSize: 14,
-        color: '#333',
-    },
-    recentlyViewedContainer: {
-        marginTop: 20,
-    },
-    sectionHeader: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    recentPost: {
-        marginRight: 10,
-        borderRadius: 10,
-        overflow: 'hidden',
-    },
-    recentPostImage: {
-        width: 100,
-        height: 100,
+        top: 8,
+        right: 8,
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        borderRadius: 5,
+        padding: 2,
     },
 });

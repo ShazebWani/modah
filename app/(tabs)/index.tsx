@@ -26,22 +26,20 @@ export default function HomePage() {
     return (
         <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
             <ScrollView>
-                {/* App Bar */}
-                <View style={styles.appBar}>
-                    <Text style={styles.appBarText}>Search</Text>
-                    <Pressable onPress={() => router.push('/(tabs)/bag')}>
-                        <Ionicons name="bag-outline" size={26} color="#000" />
-                    </Pressable>
-                </View>
 
                 {/* Search Bar */}
-                <View style={styles.searchBar}>
-                    <Ionicons name="search" size={20} color="#a0a0a0" />
-                    <TextInput
-                        style={styles.searchInput}
-                        placeholder="Search for"
-                        placeholderTextColor="#a0a0a0"
-                    />
+                <View style={styles.searchBarContainer}>
+                    <View style={styles.searchInputWrapper}>
+                        <Ionicons name="search" size={20} color="#a0a0a0" />
+                        <TextInput
+                            style={styles.searchInput}
+                            placeholder="Search for items"
+                            placeholderTextColor="#a0a0a0"
+                        />
+                    </View>
+                    <Pressable onPress={() => router.push('/(tabs)/bag')}>
+                        <Ionicons name="bag-outline" size={24} color="#000" />
+                    </Pressable>
                 </View>
 
                 {/* Horizontal Tabs */}
@@ -82,7 +80,6 @@ export default function HomePage() {
                 </View>
 
                 {/* Sellers To Watch */}
-                {/* Sellers To Watch */}
                 <View style={styles.section}>
                     <Text style={styles.sectionHeader}>SELLERS TO WATCH</Text>
                     <Text style={styles.subtitle}>The shops you should know about</Text>
@@ -112,15 +109,24 @@ const styles = StyleSheet.create({
         backgroundColor: '#f9f9f9',
         padding: 10,
     },
-    appBar: {
+    searchBarContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 15,
+        marginBottom: 16,
     },
-    appBarText: {
-        fontSize: 20,
-        fontWeight: 'bold',
+    searchInputWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        flex: 1,
+        marginRight: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
     },
     searchBar: {
         flexDirection: 'row',
@@ -171,7 +177,7 @@ const styles = StyleSheet.create({
         marginBottom: 15,
     },
     sectionHeader: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 5,
     },
@@ -184,16 +190,16 @@ const styles = StyleSheet.create({
         borderBottomColor: '#e0e0e0',
     },
     categoryText: {
-        fontSize: 14,
+        fontSize: 16,
     },
     subtitle: {
-        fontSize: 14,
+        fontSize: 15,
         color: '#888',
         marginBottom: 8,
     },
     sellerImage: {
         width: 225,
-        height: 125,
+        height: 140,
         borderRadius: 10,
         marginRight: 10,
     },
