@@ -1,50 +1,96 @@
-# Welcome to your Expo app 👋
+# Modah
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Modah is an e-commerce application built with React Native and Expo, designed to deliver a smooth and modern shopping experience. This repository contains the frontend implementation of the app, including dynamic routing, a responsive design, and mock data for placeholders. Future updates will integrate backend APIs for real-world functionality.
 
-## Get started
+## Features
 
-1. Install dependencies
+### Splash Screen
+- Displays a splash animation on app startup.
+- Smooth transition to the authentication page.
 
+### Authentication
+- Sign-up and sign-in pages.
+- Placeholder for user session persistence using PostgreSQL.
+
+### Main Pages
+1. **Home**
+   - Displays featured products and categories.
+   - Includes a dynamic Women category page (`women.tsx`).
+
+2. **Search**
+   - Search bar for product exploration.
+   - Divided into:
+      - Suggested for You: Horizontal scrolling section with tall images.
+      - Recently Viewed: Grid of small square images with horizontal scrolling.
+
+3. **MyModah**
+   - Placeholder for personalized user content.
+
+4. **Bag**
+   - Dynamic capabilities to handle cart items and checkout.
+
+5. **Account**
+   - User profile and settings.
+
+### Item Pages
+- Dynamic routing to view product details (`/items/:id`).
+- Features include:
+   - Image carousel with scroll indicators.
+   - Item description and seller information.
+   - Recommendations for similar items and sellers.
+   - Persistent bottom bar for pricing and purchase options.
+
+## File Structure
+```
+app/
+├── _splash.tsx
+├── auth/
+│   ├── signIn.tsx
+│   ├── signUp.tsx
+├── (tabs)/
+│   ├── index.tsx (Home Page)
+│   ├── search.tsx
+│   ├── bag.tsx
+│   ├── account.tsx
+├── homepages/
+│   ├── women.tsx
+├── searchpages/
+│   ├── suggested/seeAll.tsx
+│   ├── recentlyViewed/seeAll.tsx
+├── items/
+│   ├── [id].tsx
+```
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/modah.git
+   cd modah
+   ```
+
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-2. Start the app
-
+3. Start the Expo server:
    ```bash
-    npx expo start
+   npm start
    ```
 
-In the output, you'll find options to open the app in a
+4. Scan the QR code in your terminal using the Expo Go app to view the app on your device.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Future Plans
+- Backend integration using PostgreSQL.
+- Real-time product updates.
+- Enhanced search and recommendation algorithms.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Contributing
+This project is not licensed for modification or redistribution. If you have ideas or suggestions, please open an issue to discuss them.
 
-## Get a fresh project
+## License
+All rights reserved. This repository is not licensed for modification, redistribution, or commercial use. For questions about usage, please contact [Your Name/Email].
 
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Contact
+For questions or suggestions, feel free to reach out to [Shazeb](mailto:shazeb.wani@gmail.com).
