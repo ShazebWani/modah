@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "expo-ecommerce-app",
-    "slug": "expo-ecommerce-app",
+    "name": "modah",
+    "slug": "modah",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
