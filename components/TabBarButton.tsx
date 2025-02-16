@@ -29,7 +29,7 @@ const TabBarButton = (props: Props) => {
       {icon[routeName]({
         color: isFocused ? Colors.primary : Colors.black,
       })}
-      <Text style={{ color: isFocused ? "#673ab7" : "#222" }}>{label}</Text>
+      <Text style={{fontSize: 12, fontWeight: '400', color: isFocused ? "#673ab7" : "#222" }}>{label}</Text>
     </Pressable>
   );
 };
@@ -46,11 +46,11 @@ const styles = StyleSheet.create({
   badgeWrapper: {
     position: "absolute",
     backgroundColor: Colors.highlight,
-    top: -5,
+    top: -7,
     right: 20,
     paddingVertical: 2,
-    paddingHorizontal: 6,
-    borderRadius: 10,
+    paddingHorizontal: 5,
+    borderRadius: 16,
     zIndex: 10,
   },
   badgeText: {

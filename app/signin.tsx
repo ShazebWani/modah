@@ -42,14 +42,15 @@ const SignInScreen = (props: Props) => {
           <Text style={styles.btnTxt}>Login</Text>
         </TouchableOpacity>
 
-        <Text style={styles.loginTxt}>
-          Don't have an account?{" "}
-          <Link href={"/signup"} asChild>
-            <TouchableOpacity>
-              <Text style={styles.loginTxtSpan}>SignUp</Text>
-            </TouchableOpacity>
-          </Link>
-        </Text>
+        <View style={styles.loginContainer}>
+  <Text style={styles.loginTxt}>Don't Have an Account? </Text>
+  <Link href={"/signup"} asChild>
+    <TouchableOpacity>
+      <Text style={styles.loginTxtSpan}>Sign Up</Text>
+    </TouchableOpacity>
+  </Link>
+</View>
+
 
         <View style={styles.divider} />
 
@@ -104,6 +105,10 @@ const styles = StyleSheet.create({
     borderTopColor: Colors.gray,
     borderTopWidth: StyleSheet.hairlineWidth,
     width: '30%',
-    marginBottom: 30
-  }
+    marginBottom: 30,
+    marginTop: 30
+  },
+  loginContainer: {
+    alignItems: "center",
+  },  
 })

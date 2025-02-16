@@ -18,8 +18,8 @@ export default function TabLayout() {
         //   <Ionicons name='search-outline' size={22} color={color} />
         // )
       }} />
-      <Tabs.Screen name='notifications' options={{
-        title: 'Notification',
+      <Tabs.Screen name='myModah' options={{
+        title: 'myModah',
         // tabBarIcon: ({color}) => (
         //   <Ionicons name='notifications-outline' size={22} color={color} />
         // )

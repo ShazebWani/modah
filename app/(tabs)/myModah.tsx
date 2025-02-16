@@ -10,7 +10,7 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 
 type Props = {};
 
-const NotificationsScreen = (props: Props) => {
+const myModahScreen = (props: Props) => {
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
 
   useEffect(() => {
@@ -69,7 +69,7 @@ const NotificationsScreen = (props: Props) => {
   );
 };
 
-export default NotificationsScreen;
+export default myModahScreen;
 
 const styles = StyleSheet.create({
   container: {

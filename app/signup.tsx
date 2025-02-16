@@ -50,14 +50,14 @@ const SignUpScreen = (props: Props) => {
           <Text style={styles.btnTxt}>Create an Account</Text>
         </TouchableOpacity>
 
-        <Text style={styles.loginTxt}>
-          Already have an account?{" "}
-          <Link href={"/signin"} asChild>
-            <TouchableOpacity>
-              <Text style={styles.loginTxtSpan}>SignIn</Text>
-            </TouchableOpacity>
-          </Link>
-        </Text>
+        <View style={styles.loginTxt}>
+                        <Text style={styles.loginTxt}>Already have an account? </Text>
+                         <Link href={"/signin"} asChild>
+                         <TouchableOpacity>
+                          <Text style={styles.loginTxtSpan}>Sign In</Text>
+                          </TouchableOpacity>
+                        </Link>
+                      </View>
 
         <View style={styles.divider} />
 
@@ -101,6 +101,7 @@ const styles = StyleSheet.create({
   loginTxt: {
     marginBottom: 30,
     fontSize: 14,
+    alignItems: 'center',
     color: Colors.black,
     lineHeight: 24,
   },
