@@ -1,36 +1,26 @@
 import {
   ActivityIndicator,
   FlatList,
-  Image,
-  ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { CategoryType, ProductType } from "@/types/type";
+import { ProductType } from "@/types/type";
 import { Stack } from "expo-router";
 import Header from "@/components/Header";
 import ProductItem from "@/components/ProductItem";
-import { Colors } from "@/constants/Colors";
-import ProductList from "@/components/ProductList";
-import Categories from "@/components/Categories";
-import FlashSale from "@/components/FlashSale";
+import Animated, { FadeIn } from "react-native-reanimated";
 
-type Props = {};
-
-const ExploreScreen = (props: Props) => {
+const ExploreScreen = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
-  const [saleProducts, setsaleProducts] = useState<ProductType[]>([]);
-  const [categories, setCategories] = useState<CategoryType[]>([]);
+  const [popularProducts, setPopularProducts] = useState<ProductType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    getCategories();
     getProducts();
-    getSaleProducts();
+    getPopularProducts();
   }, []);
 
   const getProducts = async () => {
@@ -42,28 +32,17 @@ const ExploreScreen = (props: Props) => {
     setIsLoading(false);
   };
 
-  const getCategories = async () => {
-    const LOCAL_IP = "10.91.58.228";
-    const URL = `http://${LOCAL_IP}:8000/categories`;
-    const response = await axios.get(URL);
-
-    console.log(response.data);
-    setCategories(response.data);
-    setIsLoading(false);
-  };
-
-  const getSaleProducts = async () => {
+  const getPopularProducts = async () => {
     const LOCAL_IP = "10.91.58.228";
     const URL = `http://${LOCAL_IP}:8000/saleProducts`;
     const response = await axios.get(URL);
 
-    setsaleProducts(response.data);
-    setIsLoading(false);
+    setPopularProducts(response.data);
   };
 
   if (isLoading) {
     return (
-      <View>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size={"large"} />
       </View>
     );
@@ -77,21 +56,71 @@ const ExploreScreen = (props: Props) => {
           header: () => <Header />,
         }}
       />
-      <ScrollView>
-        <Categories categories={categories} />
-        <FlashSale products={saleProducts} />
-        <View style={{ marginHorizontal: 20, marginBottom: 10 }}>
-          <Image
-            source={require("@/assets/images/theme.png")}
-            style={{ width: "100%", height: 150, borderRadius: 15 }}
+      <View style={{ flex: 1, paddingBottom: 5 }}>
+        {/* Popular This Week */}
+        <View style={{ marginBottom: 20 }}>
+          <Text style={styles.sectionTitle}>Popular This Week</Text>
+          <FlatList
+            data={popularProducts}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item, index) => index.toString()}
+            contentContainerStyle={styles.flatListContainer}
+            renderItem={({ item, index }) => (
+              <Animated.View entering={FadeIn.duration(500)} style={styles.itemSpacing}>
+                <ProductItem item={item} index={index} productType="sale" />
+              </Animated.View>
+            )}
           />
         </View>
-        <ProductList products={products} flatlist={false} />
-      </ScrollView>
+
+        {/* For You */}
+        <View>
+          <Text style={styles.sectionTitle}>For You</Text>
+          <View style={styles.forYouContainer}></View>
+          <FlatList
+          data={products}
+          numColumns={2}
+          keyExtractor={(item, index) => index.toString()}
+          contentContainerStyle={styles.flatListContainer}
+          renderItem={({ item, index }) => (
+            <Animated.View entering={FadeIn.duration(500)} style={styles.itemSpacing}>
+              <ProductItem item={item} index={index} productType="regular" />
+            </Animated.View>
+          )}
+          ListFooterComponent={<View style={{ height: 260 }} />}
+        />
+          </View>
+        </View>
     </>
   );
 };
 
 export default ExploreScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginLeft: 7,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  flatListContainer: {
+    paddingHorizontal: 10,
+  },
+  itemSpacing: {
+    marginRight: 10,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  forYouContainer: {
+    flex: 1,
+    justifyContent: "center",
+    flexGrow: 1,
+    alignItems: "center",
+},
+});

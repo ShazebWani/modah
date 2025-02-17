@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import { Link, Stack } from "expo-router";
 import Header from "@/components/Header";
 import { Colors } from "@/constants/Colors";
+import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 
 const HomeScreen = () => {
   const [sellers, setSellers] = useState([
@@ -32,26 +33,26 @@ const HomeScreen = () => {
 
         {/* Shop By Price */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={styles.shopByPriceContainer}>
+          <Animated.View style={styles.shopByPriceContainer} entering={FadeInUp.duration(700)}>
             {["Under $10", "Under $20", "Under $50", "Under $100"].map((label, index) => (
               <TouchableOpacity key={index} style={styles.priceButton}>
                 <Text style={styles.priceButtonText}>{label}</Text>
               </TouchableOpacity>
             ))}
-          </View>
+          </Animated.View>
         </ScrollView>
 
         {/* Banner */}
-        <View style={styles.bannerContainer}>
+        <Animated.View style={styles.bannerContainer} entering={FadeIn.duration(700)}>
           <Image
             source={require("@/assets/images/theme.png")}
             style={styles.bannerImage}
           />
-        </View>
+        </Animated.View>
 
         {/* Categories */}
         <Text style={styles.sectionTitle}>Categories</Text>
-        <View style={styles.gridContainer}>
+        <Animated.View style={styles.gridContainer} entering={FadeIn.duration(700)}>
           <Link href="/explore" asChild>
             <TouchableOpacity style={styles.gridItem}>
               <Image source={require("@/assets/images/men.jpg")} style={styles.gridImage} />
@@ -87,18 +88,20 @@ const HomeScreen = () => {
               </View>
             </TouchableOpacity>
           </Link>
-        </View>
+        </Animated.View>
 
         {/* Sellers to Watch */}
         <Text style={styles.sectionTitle}>Sellers to Watch</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.sellersContainer} >
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.sellersContainer}>
           {sellers.map((seller, index) => (
-            <TouchableOpacity key={index} style={styles.sellerBox}>
-              <Image source={{ uri: seller.image }} style={styles.sellerImage} />
-              <View style={styles.overlay}>
-                <Text style={styles.overlayText}>{seller.name}</Text>
-              </View>
-            </TouchableOpacity>
+            <Animated.View key={index} style={styles.sellerBox} entering={FadeInUp.duration(700)}>
+              <TouchableOpacity>
+                <Image source={{ uri: seller.image }} style={styles.sellerImage} />
+                <View style={styles.overlay}>
+                  <Text style={styles.overlayText}>{seller.name}</Text>
+                </View>
+              </TouchableOpacity>
+            </Animated.View>
           ))}
         </ScrollView>
 
@@ -108,6 +111,7 @@ const HomeScreen = () => {
 };
 
 export default HomeScreen;
+
 
 const styles = StyleSheet.create({
   shopByPriceContainer: {
