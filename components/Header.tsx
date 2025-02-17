@@ -5,19 +5,22 @@ import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 
-type Props = {};
-
-const Header = (props: Props) => {
+const Header = () => {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container, { paddingTop: insets.top }]}> 
       <Text style={styles.logo}>M</Text>
       <Link href={'/explore'} asChild>
-      <TouchableOpacity style={styles.searchBar}>
-        <Text style={styles.searchTxt}>Search</Text>
-        <Ionicons name="search-outline" size={20} color={Colors.gray} />
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.searchBar}>
+          <Text style={styles.searchTxt}>Search</Text>
+          <Ionicons name="search-outline" size={20} color={Colors.gray} />
+        </TouchableOpacity>
+      </Link>
+      <Link href={'/myModah'} asChild>
+        <TouchableOpacity>
+          <Ionicons name="notifications-outline" size={24} color={Colors.black} />
+        </TouchableOpacity>
       </Link>
     </View>
   );
@@ -28,12 +31,11 @@ export default Header;
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: Colors.white,
     paddingHorizontal: 20,
     paddingBottom: 10,
-    gap: 15
+    gap: 15,
   },
   logo: {
     fontSize: 24,
@@ -46,10 +48,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingVertical: 8,
     paddingHorizontal: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   searchTxt: {
-    color: Colors.gray
-  }
+    color: Colors.gray,
+  },
 });

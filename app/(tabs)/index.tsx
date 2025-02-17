@@ -1,94 +1,107 @@
 import {
-  ActivityIndicator,
-  FlatList,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  Image,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { CategoryType, ProductType } from "@/types/type";
-import { Stack } from "expo-router";
+import React, { useState } from "react";
+import { Link, Stack } from "expo-router";
 import Header from "@/components/Header";
-import ProductItem from "@/components/ProductItem";
 import { Colors } from "@/constants/Colors";
-import ProductList from "@/components/ProductList";
-import Categories from "@/components/Categories";
-import FlashSale from "@/components/FlashSale";
 
-type Props = {};
-
-const HomeScreen = (props: Props) => {
-  const [products, setProducts] = useState<ProductType[]>([]);
-  const [saleProducts, setsaleProducts] = useState<ProductType[]>([]);
-  const [categories, setCategories] = useState<CategoryType[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    getCategories();
-    getProducts();
-    getSaleProducts();
-  }, []);
-
-  const getProducts = async () => {
-    const LOCAL_IP = "10.91.58.228";
-    const URL = `http://${LOCAL_IP}:8000/products`;
-    const response = await axios.get(URL);
-
-    // console.log(response.data);
-    setProducts(response.data);
-    setIsLoading(false);
-  };
-
-  const getCategories = async () => {
-    const LOCAL_IP = "10.91.58.228";
-    const URL = `http://${LOCAL_IP}:8000/categories`;
-    const response = await axios.get(URL);
-
-    console.log(response.data);
-    setCategories(response.data);
-    setIsLoading(false);
-  };
-
-  const getSaleProducts = async () => {
-    const LOCAL_IP = "10.91.58.228";
-    const URL = `http://${LOCAL_IP}:8000/saleProducts`;
-    const response = await axios.get(URL);
-
-    // console.log(response.data);
-    setsaleProducts(response.data);
-    setIsLoading(false);
-  };
-
-  if (isLoading) {
-    return (
-      <View>
-        <ActivityIndicator size={"large"} />
-      </View>
-    );
-  }
+const HomeScreen = () => {
+  const [sellers, setSellers] = useState([
+    { name: "Seller 1", image: "https://placehold.co/600x400" },
+    { name: "Seller 2", image: "https://placehold.co/600x400" },
+    { name: "Seller 3", image: "https://placehold.co/600x400" },
+    { name: "Seller 4", image: "https://placehold.co/600x400" },
+    { name: "Seller 5", image: "https://placehold.co/600x400" },
+    { name: "Seller 6", image: "https://placehold.co/600x400" },
+    { name: "Seller 7", image: "https://placehold.co/600x400" },
+    { name: "Seller 8", image: "https://placehold.co/600x400" },
+    { name: "Seller 9", image: "https://placehold.co/600x400" },
+    { name: "Seller 10", image: "https://placehold.co/600x400" },
+  ]);
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerShown: true,
-          header: () => <Header />,
-        }}
-      />
+      <Stack.Screen options={{ headerShown: true, header: () => <Header /> }} />
       <ScrollView>
-        <Categories categories={categories} />
-        <FlashSale products={saleProducts} />
-        <View style={{ marginHorizontal: 20, marginBottom: 10 }}>
+
+        {/* Shop By Price */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View style={styles.shopByPriceContainer}>
+            {["Under $10", "Under $20", "Under $50", "Under $100"].map((label, index) => (
+              <TouchableOpacity key={index} style={styles.priceButton}>
+                <Text style={styles.priceButtonText}>{label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+
+        {/* Banner */}
+        <View style={styles.bannerContainer}>
           <Image
-            source={require("@/assets/images/sale-banner.jpg")}
-            style={{ width: "100%", height: 150, borderRadius: 15 }}
+            source={require("@/assets/images/theme.png")}
+            style={styles.bannerImage}
           />
         </View>
-        <ProductList products={products} flatlist={false} />
+
+        {/* Categories */}
+        <Text style={styles.sectionTitle}>Categories</Text>
+        <View style={styles.gridContainer}>
+          <Link href="/explore" asChild>
+            <TouchableOpacity style={styles.gridItem}>
+              <Image source={require("@/assets/images/men.jpg")} style={styles.gridImage} />
+              <View style={styles.overlay}>
+                <Text style={styles.overlayText}>Men</Text>
+              </View>
+            </TouchableOpacity>
+          </Link>
+
+          <Link href="/explore" asChild>
+            <TouchableOpacity style={styles.gridItem}>
+              <Image source={require("@/assets/images/women.jpg")} style={styles.gridImage} />
+              <View style={styles.overlay}>
+                <Text style={styles.overlayText}>Women</Text>
+              </View>
+            </TouchableOpacity>
+          </Link>
+
+          <Link href="/explore" asChild>
+            <TouchableOpacity style={styles.gridItem}>
+              <Image source={require("@/assets/images/kids.jpg")} style={styles.gridImage} />
+              <View style={styles.overlay}>
+                <Text style={styles.overlayText}>Kids</Text>
+              </View>
+            </TouchableOpacity>
+          </Link>
+
+          <Link href="/explore" asChild>
+            <TouchableOpacity style={styles.gridItem}>
+              <Image source={require("@/assets/images/other.jpg")} style={styles.gridImage} />
+              <View style={styles.overlay}>
+                <Text style={styles.overlayText}>Other</Text>
+              </View>
+            </TouchableOpacity>
+          </Link>
+        </View>
+
+        {/* Sellers to Watch */}
+        <Text style={styles.sectionTitle}>Sellers to Watch</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.sellersContainer} >
+          {sellers.map((seller, index) => (
+            <TouchableOpacity key={index} style={styles.sellerBox}>
+              <Image source={{ uri: seller.image }} style={styles.sellerImage} />
+              <View style={styles.overlay}>
+                <Text style={styles.overlayText}>{seller.name}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
       </ScrollView>
     </>
   );
@@ -96,4 +109,99 @@ const HomeScreen = (props: Props) => {
 
 export default HomeScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  shopByPriceContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginHorizontal: 7,
+    gap: 5,
+  },
+  priceButton: {
+    backgroundColor: Colors.primary,
+    paddingVertical: 5,
+    paddingHorizontal: 7.5,
+    alignItems: "center",
+    borderRadius: 5,
+  },
+  priceButtonText: {
+    color: Colors.white,
+    fontWeight: "600",
+    fontSize: 11,
+  },
+  bannerContainer: {
+    marginHorizontal: 7,
+    marginVertical: 10,
+  },
+  bannerImage: {
+    width: "100%",
+    height: 150,
+    borderRadius: 15,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginLeft: 7,
+    color: Colors.black
+  },
+  gridContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    marginHorizontal: 7,
+  },
+  gridItem: {
+    width: "48%",
+    marginVertical: 5,
+  },
+  gridImage: {
+    width: "100%",
+    height: 120,
+    borderRadius: 10,
+  },
+  sellerBox: {
+    marginTop: 5,
+    width: 120,
+    marginHorizontal: 3,
+  },
+  sellerImage: {
+    width: "100%",
+    height: 120,
+    borderRadius: 10,
+  },
+  categoryText: {
+    fontSize: 14,
+    fontWeight: "600",
+    textAlign: "center",
+    marginTop: 5,
+    color: Colors.black,
+  },
+  sellerText: {
+    fontSize: 14,
+    fontWeight: "500",
+    textAlign: "center",
+    marginTop: 5,
+    color: Colors.black,
+    width: 100,
+  },
+  sellersContainer: {
+    paddingHorizontal: 4,
+  },
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+  overlayText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  
+});

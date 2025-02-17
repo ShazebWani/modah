@@ -1,21 +1,46 @@
-import { FlatList, Image, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { CategoryType } from "@/types/type";
+import { CategoryType, ProductType } from "@/types/type";
 import { Stack } from "expo-router";
-import { useHeaderHeight } from "@react-navigation/elements";
+import Header from "@/components/Header";
+import ProductItem from "@/components/ProductItem";
 import { Colors } from "@/constants/Colors";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import ProductList from "@/components/ProductList";
+import Categories from "@/components/Categories";
+import FlashSale from "@/components/FlashSale";
 
 type Props = {};
 
 const ExploreScreen = (props: Props) => {
+  const [products, setProducts] = useState<ProductType[]>([]);
+  const [saleProducts, setsaleProducts] = useState<ProductType[]>([]);
   const [categories, setCategories] = useState<CategoryType[]>([]);
-  const headerHeight = useHeaderHeight();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     getCategories();
+    getProducts();
+    getSaleProducts();
   }, []);
+
+  const getProducts = async () => {
+    const LOCAL_IP = "10.91.58.228";
+    const URL = `http://${LOCAL_IP}:8000/products`;
+    const response = await axios.get(URL);
+
+    setProducts(response.data);
+    setIsLoading(false);
+  };
 
   const getCategories = async () => {
     const LOCAL_IP = "10.91.58.228";
@@ -24,53 +49,49 @@ const ExploreScreen = (props: Props) => {
 
     console.log(response.data);
     setCategories(response.data);
+    setIsLoading(false);
   };
+
+  const getSaleProducts = async () => {
+    const LOCAL_IP = "10.91.58.228";
+    const URL = `http://${LOCAL_IP}:8000/saleProducts`;
+    const response = await axios.get(URL);
+
+    setsaleProducts(response.data);
+    setIsLoading(false);
+  };
+
+  if (isLoading) {
+    return (
+      <View>
+        <ActivityIndicator size={"large"} />
+      </View>
+    );
+  }
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: true, headerTransparent: true }} />
-      <View style={[styles.container, { marginTop: headerHeight }]}>
-        <FlatList
-          data={categories}
-          keyExtractor={(item) => item.id.toString()}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item, index }) => (
-            <Animated.View
-              style={styles.itemWrapper}
-              entering={FadeInDown.delay(300 + index * 100).duration(500)}
-            >
-              <Text style={styles.itemTitle}>{item.name}</Text>
-              <Image
-                source={{ uri: item.image }}
-                style={{ width: 100, height: 100, borderRadius: 10 }}
-              />
-            </Animated.View>
-          )}
-        />
-      </View>
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          header: () => <Header />,
+        }}
+      />
+      <ScrollView>
+        <Categories categories={categories} />
+        <FlashSale products={saleProducts} />
+        <View style={{ marginHorizontal: 20, marginBottom: 10 }}>
+          <Image
+            source={require("@/assets/images/theme.png")}
+            style={{ width: "100%", height: 150, borderRadius: 15 }}
+          />
+        </View>
+        <ProductList products={products} flatlist={false} />
+      </ScrollView>
     </>
   );
 };
 
 export default ExploreScreen;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  itemWrapper: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: Colors.extraLightGray,
-    padding: 10,
-    borderRadius: 10,
-    marginBottom: 20,
-  },
-  itemTitle: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: Colors.black,
-  },
-});
+const styles = StyleSheet.create({});
