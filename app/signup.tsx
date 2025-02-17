@@ -5,16 +5,34 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Link, router, Stack } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import InputField from "@/components/InputField";
 import SocialLoginButtons from "@/components/SocialLoginButtons";
+import { signUp } from "@/utils/auth";
 
-type Props = {};
+const SignUpScreen = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-const SignUpScreen = (props: Props) => {
+  const handleSignUp = async () => {
+    if (password !== confirmPassword) {
+      setError("Passwords do not match!");
+      return;
+    }
+
+    try {
+      await signUp(email, password);
+      router.push("/"); 
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   return (
     <>
       <Stack.Screen
@@ -34,34 +52,42 @@ const SignUpScreen = (props: Props) => {
           placeholderTextColor={Colors.gray}
           autoCapitalize="none"
           keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
         />
         <InputField
           placeholder="Password"
           placeholderTextColor={Colors.gray}
           secureTextEntry={true}
+          value={password}
+          onChangeText={setPassword}
         />
         <InputField
           placeholder="Confirm Password"
           placeholderTextColor={Colors.gray}
           secureTextEntry={true}
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
         />
 
-        <TouchableOpacity style={styles.btn}>
+        {error && <Text style={{ color: "red" }}>{error}</Text>}
+
+        <TouchableOpacity style={styles.btn} onPress={handleSignUp}>
           <Text style={styles.btnTxt}>Create an Account</Text>
         </TouchableOpacity>
 
         <View style={styles.loginTxt}>
-                        <Text style={styles.loginTxt}>Already have an account? </Text>
-                         <Link href={"/signin"} asChild>
-                         <TouchableOpacity>
-                          <Text style={styles.loginTxtSpan}>Sign In</Text>
-                          </TouchableOpacity>
-                        </Link>
-                      </View>
+          <Text style={styles.loginTxt}>Already have an account? </Text>
+          <Link href={"/signin"} asChild>
+            <TouchableOpacity>
+              <Text style={styles.loginTxtSpan}>Sign In</Text>
+            </TouchableOpacity>
+          </Link>
+        </View>
 
         <View style={styles.divider} />
 
-        <SocialLoginButtons emailHref={'/signin'} />
+        <SocialLoginButtons emailHref={"/signin"} />
       </View>
     </>
   );

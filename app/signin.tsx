@@ -1,14 +1,26 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
-import { Link, router, Stack } from 'expo-router'
-import InputField from '@/components/InputField'
-import SocialLoginButtons from '@/components/SocialLoginButtons'
-import { Ionicons } from '@expo/vector-icons'
-import { Colors } from '@/constants/Colors'
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { Link, router, Stack } from "expo-router";
+import InputField from "@/components/InputField";
+import SocialLoginButtons from "@/components/SocialLoginButtons";
+import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "@/constants/Colors";
+import { logIn } from "@/utils/auth";
 
-type Props = {}
+const SignInScreen = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-const SignInScreen = (props: Props) => {
+  const handleLogin = async () => {
+    try {
+      await logIn(email, password);
+      router.push("/");
+    } catch (err) {
+      setError("Invalid credentials");
+    }
+  };
+
   return (
     <>
       <Stack.Screen
@@ -28,39 +40,41 @@ const SignInScreen = (props: Props) => {
           placeholderTextColor={Colors.gray}
           autoCapitalize="none"
           keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
         />
         <InputField
           placeholder="Password"
           placeholderTextColor={Colors.gray}
           secureTextEntry={true}
+          value={password}
+          onChangeText={setPassword}
         />
 
-        <TouchableOpacity style={styles.btn} onPress={() => {
-          router.dismissAll();
-          router.push('/(tabs)');
-        }}>
+        {error && <Text style={{ color: "red" }}>{error}</Text>}
+
+        <TouchableOpacity style={styles.btn} onPress={handleLogin}>
           <Text style={styles.btnTxt}>Login</Text>
         </TouchableOpacity>
 
         <View style={styles.loginContainer}>
-  <Text style={styles.loginTxt}>Don't Have an Account? </Text>
-  <Link href={"/signup"} asChild>
-    <TouchableOpacity>
-      <Text style={styles.loginTxtSpan}>Sign Up</Text>
-    </TouchableOpacity>
-  </Link>
-</View>
-
+          <Text style={styles.loginTxt}>Don't Have an Account? </Text>
+          <Link href={"/signup"} asChild>
+            <TouchableOpacity>
+              <Text style={styles.loginTxtSpan}>Sign Up</Text>
+            </TouchableOpacity>
+          </Link>
+        </View>
 
         <View style={styles.divider} />
 
-        <SocialLoginButtons emailHref={'/signin'} />
+        <SocialLoginButtons emailHref={"/signin"} />
       </View>
     </>
-  )
-}
+  );
+};
 
-export default SignInScreen
+export default SignInScreen;
 
 const styles = StyleSheet.create({
   container: {
