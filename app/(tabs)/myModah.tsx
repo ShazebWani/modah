@@ -2,15 +2,13 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Stack } from "expo-router";
 import { useHeaderHeight } from "@react-navigation/elements";
-import axios from "axios";
 import { NotificationType } from "@/types/type";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import Animated, { FadeInDown } from "react-native-reanimated";
+import { fetchNotifications } from "@/utils/firebaseDB"; // Import Firebase function
 
-type Props = {};
-
-const myModahScreen = (props: Props) => {
+const myModahScreen = () => {
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
 
   useEffect(() => {
@@ -18,12 +16,9 @@ const myModahScreen = (props: Props) => {
   }, []);
 
   const getNotifications = async () => {
-    const LOCAL_IP = "10.91.58.228";
-    const URL = `http://${LOCAL_IP}:8000/notifications`;
-    const response = await axios.get(URL);
-
-    console.log("Notification Response", response.data);
-    setNotifications(response.data);
+    const data = await fetchNotifications();
+    console.log("Fetched Notifications:", data);
+    setNotifications(data);
   };
 
   const headerHeight = useHeaderHeight();

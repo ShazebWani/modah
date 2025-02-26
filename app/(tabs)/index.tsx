@@ -6,25 +6,24 @@ import {
   View,
   Image,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, Stack } from "expo-router";
 import Header from "@/components/Header";
 import { Colors } from "@/constants/Colors";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
+import { fetchSellers } from "@/utils/firebaseDB";
 
 const HomeScreen = () => {
-  const [sellers, setSellers] = useState([
-    { name: "Seller 1", image: "https://placehold.co/600x400" },
-    { name: "Seller 2", image: "https://placehold.co/600x400" },
-    { name: "Seller 3", image: "https://placehold.co/600x400" },
-    { name: "Seller 4", image: "https://placehold.co/600x400" },
-    { name: "Seller 5", image: "https://placehold.co/600x400" },
-    { name: "Seller 6", image: "https://placehold.co/600x400" },
-    { name: "Seller 7", image: "https://placehold.co/600x400" },
-    { name: "Seller 8", image: "https://placehold.co/600x400" },
-    { name: "Seller 9", image: "https://placehold.co/600x400" },
-    { name: "Seller 10", image: "https://placehold.co/600x400" },
-  ]);
+  const [sellers, setSellers] = useState<any[]>([]);
+
+  useEffect(() => {
+    const loadSellers = async () => {
+      const data = await fetchSellers();
+      console.log("Final Sellers Data:", data); // Debugging
+      setSellers(data);
+    };
+    loadSellers();
+  }, []);
 
   return (
     <>
@@ -93,16 +92,20 @@ const HomeScreen = () => {
         {/* Sellers to Watch */}
         <Text style={styles.sectionTitle}>Sellers to Watch</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.sellersContainer}>
-          {sellers.map((seller, index) => (
-            <Animated.View key={index} style={styles.sellerBox} entering={FadeInUp.duration(700)}>
-              <TouchableOpacity>
-                <Image source={{ uri: seller.image }} style={styles.sellerImage} />
-                <View style={styles.overlay}>
-                  <Text style={styles.overlayText}>{seller.name}</Text>
-                </View>
-              </TouchableOpacity>
-            </Animated.View>
-          ))}
+          {sellers.length > 0 ? (
+            sellers.map((seller, index) => (
+              <Animated.View key={index} style={styles.sellerBox} entering={FadeInUp.duration(700)}>
+                <TouchableOpacity>
+                  <Image source={{ uri: seller.image }} style={styles.sellerImage} />
+                  <View style={styles.overlay}>
+                    <Text style={styles.overlayText}>{seller.name}</Text>
+                  </View>
+                </TouchableOpacity>
+              </Animated.View>
+            ))
+          ) : (
+            <Text style={styles.noSellersText}>No sellers available</Text>
+          )}
         </ScrollView>
 
       </ScrollView>
@@ -111,7 +114,6 @@ const HomeScreen = () => {
 };
 
 export default HomeScreen;
-
 
 const styles = StyleSheet.create({
   shopByPriceContainer: {
@@ -207,5 +209,10 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "center",
   },
-  
+  noSellersText: {
+    color: Colors.gray,
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 10,
+  },
 });

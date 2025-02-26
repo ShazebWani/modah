@@ -605,5 +605,63 @@
       "message": "Your order has been successfully shipped.",
       "timestamp": "4 weeks ago"
     }
+  ],
+  "sellers": [
+    {
+      "id": 1,
+      "name": "Modern Essentials",
+      "image": "https://placehold.co/600x400",
+      "location": "New York, USA",
+      "rating": 4.8
+    },
+    {
+      "id": 2,
+      "name": "Trendy Wear",
+      "image": "https://placehold.co/600x400",
+      "location": "Los Angeles, USA",
+      "rating": 4.7
+    },
+    {
+      "id": 3,
+      "name": "Eco Fashion",
+      "image": "https://placehold.co/600x400",
+      "location": "Toronto, Canada",
+      "rating": 4.9
+    },
+    {
+      "id": 4,
+      "name": "Luxury Styles",
+      "image": "https://placehold.co/600x400",
+      "location": "Paris, France",
+      "rating": 4.6
+    },
+    {
+      "id": 5,
+      "name": "Urban Outfit Trends",
+      "image": "https://placehold.co/600x400",
+      "location": "London, UK",
+      "rating": 4.5
+    },
+    {
+      "id": 6,
+      "name": "Casual Comforts",
+      "image": "https://placehold.co/600x400",
+      "location": "Berlin, Germany",
+      "rating": 4.7
+    },
+    {
+      "id": 7,
+      "name": "Classic Wardrobe",
+      "image": "https://placehold.co/600x400",
+      "location": "Sydney, Australia",
+      "rating": 4.9
+    },
+    {
+      "id": 8,
+      "name": "Minimalist Trends",
+      "image": "https://placehold.co/600x400",
+      "location": "Tokyo, Japan",
+      "rating": 4.8
+    }
   ]
 }

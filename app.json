@@ -1,5 +1,6 @@
 {
   "expo": {
+    "owner": "shazeb.w",
     "name": "modah",
     "slug": "modah",
     "version": "1.0.0",
@@ -13,13 +14,15 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "newArchEnabled": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "newArchEnabled": true
     },
     "web": {
       "bundler": "metro",

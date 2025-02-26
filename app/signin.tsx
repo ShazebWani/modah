@@ -13,13 +13,15 @@ const SignInScreen = () => {
   const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async () => {
-    try {
-      await logIn(email, password);
-      router.push("/");
-    } catch (err) {
-      setError("Invalid credentials");
+    const { user, error } = await logIn(email, password);
+    if (error) {
+      setError(error); // Show the error message inside the UI
+      return;
     }
+  
+    router.replace("/(tabs)"); // Redirect on success
   };
+  
 
   return (
     <>

@@ -1,24 +1,14 @@
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-} from "react-native";
+import { FlatList, Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { CartItemType } from "@/types/type";
 import { Stack } from "expo-router";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, { FadeInDown } from "react-native-reanimated";
+import { fetchCartItems } from "@/utils/firebaseDB"; // Import Firebase function
 
-type Props = {};
-
-const CartScreen = (props: Props) => {
-  const [cartItems, setCartItems] = useState<CartItemType[]>();
+const CartScreen = () => {
+  const [cartItems, setCartItems] = useState([]);
   const headerHeight = useHeaderHeight();
 
   useEffect(() => {
@@ -26,12 +16,13 @@ const CartScreen = (props: Props) => {
   }, []);
 
   const getCartData = async () => {
-    const LOCAL_IP = "10.91.58.228";
-    const URL = `http://${LOCAL_IP}:8000/cart`;
-    const response = await axios.get(URL);
+    const data = await fetchCartItems();
+    console.log("Fetched Cart Data:", data);
+    setCartItems(data);
+  };
 
-    console.log("Cart Data Response", response.data);
-    setCartItems(response.data);
+  const calculateTotal = () => {
+    return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   };
 
   return (
@@ -42,9 +33,7 @@ const CartScreen = (props: Props) => {
           data={cartItems}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item, index }) => (
-            <Animated.View
-              entering={FadeInDown.delay(300 + index * 100).duration(500)}
-            >
+            <Animated.View entering={FadeInDown.delay(300 + index * 100).duration(500)}>
               <CartItem item={item} />
             </Animated.View>
           )}
@@ -52,7 +41,7 @@ const CartScreen = (props: Props) => {
       </View>
       <View style={styles.footer}>
         <View style={styles.priceInfoWrapper}>
-          <Text style={styles.totalText}>Total: $100</Text>
+          <Text style={styles.totalText}>Total: ${calculateTotal()}</Text>
         </View>
         <TouchableOpacity style={styles.checkoutBtn}>
           <Text style={styles.checkoutBtnText}>Checkout</Text>
@@ -62,7 +51,7 @@ const CartScreen = (props: Props) => {
   );
 };
 
-const CartItem = ({ item }: { item: CartItemType }) => {
+const CartItem = ({ item }) => {
   return (
     <View style={styles.itemWrapper}>
       <Image source={{ uri: item.image }} style={styles.itemImg} />
@@ -77,7 +66,7 @@ const CartItem = ({ item }: { item: CartItemType }) => {
             <TouchableOpacity style={styles.quantityControl}>
               <Ionicons name="remove-outline" size={20} color={Colors.black} />
             </TouchableOpacity>
-            <Text>1</Text>
+            <Text>{item.quantity}</Text>
             <TouchableOpacity style={styles.quantityControl}>
               <Ionicons name="add-outline" size={20} color={Colors.black} />
             </TouchableOpacity>
@@ -92,6 +81,7 @@ const CartItem = ({ item }: { item: CartItemType }) => {
 };
 
 export default CartScreen;
+
 
 const styles = StyleSheet.create({
   container: {

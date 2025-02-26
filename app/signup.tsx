@@ -24,13 +24,14 @@ const SignUpScreen = () => {
       setError("Passwords do not match!");
       return;
     }
-
-    try {
-      await signUp(email, password);
-      router.push("/"); 
-    } catch (err) {
-      setError(err.message);
+  
+    const { user, error } = await signUp(email, password);
+    if (error) {
+      setError(error);
+      return;
     }
+  
+    router.replace("/(tabs)"); 
   };
 
   return (
