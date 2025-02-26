@@ -79,11 +79,9 @@ const SignUpScreen = () => {
 
         <View style={styles.loginTxt}>
           <Text style={styles.loginTxt}>Already have an account? </Text>
-          <Link href={"/signin"} asChild>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.replace("/signin")}>
               <Text style={styles.loginTxtSpan}>Sign In</Text>
             </TouchableOpacity>
-          </Link>
         </View>
 
         <View style={styles.divider} />

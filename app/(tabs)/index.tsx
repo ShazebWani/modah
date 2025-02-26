@@ -19,7 +19,7 @@ const HomeScreen = () => {
   useEffect(() => {
     const loadSellers = async () => {
       const data = await fetchSellers();
-      console.log("Final Sellers Data:", data); // Debugging
+      console.log("Final Sellers Data:", data);
       setSellers(data);
     };
     loadSellers();
@@ -32,16 +32,18 @@ const HomeScreen = () => {
 
         {/* Shop By Price */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <Animated.View style={styles.shopByPriceContainer} entering={FadeInUp.duration(700)}>
+          <Animated.View style={styles.shopByPriceContainer} entering={FadeInUp.duration(500)}>
             {["Under $10", "Under $20", "Under $50", "Under $100"].map((label, index) => (
-              <TouchableOpacity key={index} style={styles.priceButton}>
-                <Text style={styles.priceButtonText}>{label}</Text>
-              </TouchableOpacity>
+              <Animated.View key={index} entering={FadeInUp.delay(index * 100).duration(500)}>
+                <TouchableOpacity style={styles.priceButton}>
+                  <Text style={styles.priceButtonText}>{label}</Text>
+                </TouchableOpacity>
+              </Animated.View>
             ))}
           </Animated.View>
         </ScrollView>
 
-        {/* Banner */}
+        {/* Theme */}
         <Animated.View style={styles.bannerContainer} entering={FadeIn.duration(700)}>
           <Image
             source={require("@/assets/images/theme.png")}
@@ -51,42 +53,64 @@ const HomeScreen = () => {
 
         {/* Categories */}
         <Text style={styles.sectionTitle}>Categories</Text>
-        <Animated.View style={styles.gridContainer} entering={FadeIn.duration(700)}>
-          <Link href="/explore" asChild>
-            <TouchableOpacity style={styles.gridItem}>
-              <Image source={require("@/assets/images/men.jpg")} style={styles.gridImage} />
-              <View style={styles.overlay}>
-                <Text style={styles.overlayText}>Men</Text>
-              </View>
-            </TouchableOpacity>
-          </Link>
+        <Animated.View style={styles.gridContainer} entering={FadeInUp.duration(700)}>
+          
+        <Link href="/explore" asChild>
+        <TouchableOpacity style={styles.gridItem}>
+          <Animated.Image 
+            source={require("@/assets/images/men.jpg")} 
+            style={styles.gridImage} 
+            entering={FadeInUp.delay(100).duration(700)}
+          />
+          <View style={styles.overlay}>
+            <Text style={styles.overlayText}>Men</Text>
+          </View>
+        </TouchableOpacity>
+      </Link>
 
-          <Link href="/explore" asChild>
-            <TouchableOpacity style={styles.gridItem}>
-              <Image source={require("@/assets/images/women.jpg")} style={styles.gridImage} />
-              <View style={styles.overlay}>
-                <Text style={styles.overlayText}>Women</Text>
-              </View>
-            </TouchableOpacity>
-          </Link>
 
-          <Link href="/explore" asChild>
-            <TouchableOpacity style={styles.gridItem}>
-              <Image source={require("@/assets/images/kids.jpg")} style={styles.gridImage} />
-              <View style={styles.overlay}>
-                <Text style={styles.overlayText}>Kids</Text>
-              </View>
-            </TouchableOpacity>
-          </Link>
+        <Link href="/explore" asChild>
+        <TouchableOpacity style={styles.gridItem}>
+          <Animated.Image 
+            source={require("@/assets/images/women.jpg")} 
+            style={styles.gridImage} 
+            entering={FadeInUp.delay(100).duration(700)}
+          />
+          <View style={styles.overlay}>
+            <Text style={styles.overlayText}>Women</Text>
+          </View>
+        </TouchableOpacity>
+      </Link>
 
-          <Link href="/explore" asChild>
-            <TouchableOpacity style={styles.gridItem}>
-              <Image source={require("@/assets/images/other.jpg")} style={styles.gridImage} />
-              <View style={styles.overlay}>
-                <Text style={styles.overlayText}>Other</Text>
-              </View>
-            </TouchableOpacity>
-          </Link>
+
+      <Link href="/explore" asChild>
+      <TouchableOpacity style={styles.gridItem}>
+        <Animated.Image 
+          source={require("@/assets/images/kids.jpg")} 
+          style={styles.gridImage} 
+          entering={FadeInUp.delay(100).duration(700)}
+        />
+        <View style={styles.overlay}>
+          <Text style={styles.overlayText}>Kids</Text>
+        </View>
+      </TouchableOpacity>
+      </Link>
+
+
+        <Link href="/explore" asChild>
+      <TouchableOpacity style={styles.gridItem}>
+        <Animated.Image 
+          source={require("@/assets/images/men.jpg")} 
+          style={styles.gridImage} 
+          entering={FadeInUp.delay(100).duration(700)}
+        />
+        <View style={styles.overlay}>
+          <Text style={styles.overlayText}>Men</Text>
+        </View>
+      </TouchableOpacity>
+    </Link>
+
+
         </Animated.View>
 
         {/* Sellers to Watch */}
@@ -94,9 +118,17 @@ const HomeScreen = () => {
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.sellersContainer}>
           {sellers.length > 0 ? (
             sellers.map((seller, index) => (
-              <Animated.View key={index} style={styles.sellerBox} entering={FadeInUp.duration(700)}>
+              <Animated.View 
+                key={index} 
+                style={styles.sellerBox} 
+                entering={FadeInUp.delay(index * 100).duration(500)}
+              >
                 <TouchableOpacity>
-                  <Image source={{ uri: seller.image }} style={styles.sellerImage} />
+                  <Animated.Image 
+                    source={{ uri: seller.image }} 
+                    style={styles.sellerImage} 
+                    entering={FadeIn.duration(500)}
+                  />
                   <View style={styles.overlay}>
                     <Text style={styles.overlayText}>{seller.name}</Text>
                   </View>
@@ -104,7 +136,9 @@ const HomeScreen = () => {
               </Animated.View>
             ))
           ) : (
-            <Text style={styles.noSellersText}>No sellers available</Text>
+            <Animated.View entering={FadeIn.duration(500)}>
+              <Text style={styles.noSellersText}>No sellers available</Text>
+            </Animated.View>
           )}
         </ScrollView>
 

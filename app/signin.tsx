@@ -27,6 +27,7 @@ const SignInScreen = () => {
     <>
       <Stack.Screen
         options={{
+
           headerTitle: "Sign In",
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()}>
@@ -61,11 +62,9 @@ const SignInScreen = () => {
 
         <View style={styles.loginContainer}>
           <Text style={styles.loginTxt}>Don't Have an Account? </Text>
-          <Link href={"/signup"} asChild>
-            <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.replace("/signup")}>
               <Text style={styles.loginTxtSpan}>Sign Up</Text>
             </TouchableOpacity>
-          </Link>
         </View>
 
         <View style={styles.divider} />
