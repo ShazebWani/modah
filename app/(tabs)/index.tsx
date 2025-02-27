@@ -12,15 +12,25 @@ import Header from "@/components/Header";
 import { Colors } from "@/constants/Colors";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 import { fetchSellers } from "@/utils/firebaseDB";
+import { SellerType } from "@/types/type";
+
+const categoryImages: Record<string, any> = {
+  Men: require("@/assets/images/men.jpg"),
+  Women: require("@/assets/images/women.jpg"),
+  Kids: require("@/assets/images/kids.jpg"),
+  Other: require("@/assets/images/other.jpg"),
+};
+
 
 const HomeScreen = () => {
-  const [sellers, setSellers] = useState<any[]>([]);
+  const [sellers, setSellers] = useState<SellerType[]>([]);
 
   useEffect(() => {
     const loadSellers = async () => {
       const data = await fetchSellers();
-      console.log("Final Sellers Data:", data);
-      setSellers(data);
+      if (data) {
+        setSellers(data);
+      }
     };
     loadSellers();
   }, []);
@@ -54,61 +64,19 @@ const HomeScreen = () => {
         {/* Categories */}
         <Text style={styles.sectionTitle}>Categories</Text>
         <Animated.View style={styles.gridContainer} entering={FadeInUp.duration(700)}>
-          
-        <Link href="/explore" asChild>
-        <TouchableOpacity style={styles.gridItem}>
-          <Animated.Image 
-            source={require("@/assets/images/men.jpg")} 
-            style={styles.gridImage} 
+
+        {["Men", "Women", "Kids", "Other"].map((category, index) => (
+        <TouchableOpacity key={category} style={styles.gridItem}>
+          <Animated.Image
+            source={categoryImages[category]}
+            style={styles.gridImage}
             entering={FadeInUp.delay(100).duration(700)}
           />
           <View style={styles.overlay}>
-            <Text style={styles.overlayText}>Men</Text>
+            <Text style={styles.overlayText}>{category}</Text>
           </View>
         </TouchableOpacity>
-      </Link>
-
-
-        <Link href="/explore" asChild>
-        <TouchableOpacity style={styles.gridItem}>
-          <Animated.Image 
-            source={require("@/assets/images/women.jpg")} 
-            style={styles.gridImage} 
-            entering={FadeInUp.delay(100).duration(700)}
-          />
-          <View style={styles.overlay}>
-            <Text style={styles.overlayText}>Women</Text>
-          </View>
-        </TouchableOpacity>
-      </Link>
-
-
-      <Link href="/explore" asChild>
-      <TouchableOpacity style={styles.gridItem}>
-        <Animated.Image 
-          source={require("@/assets/images/kids.jpg")} 
-          style={styles.gridImage} 
-          entering={FadeInUp.delay(100).duration(700)}
-        />
-        <View style={styles.overlay}>
-          <Text style={styles.overlayText}>Kids</Text>
-        </View>
-      </TouchableOpacity>
-      </Link>
-
-
-        <Link href="/explore" asChild>
-      <TouchableOpacity style={styles.gridItem}>
-        <Animated.Image 
-          source={require("@/assets/images/men.jpg")} 
-          style={styles.gridImage} 
-          entering={FadeInUp.delay(100).duration(700)}
-        />
-        <View style={styles.overlay}>
-          <Text style={styles.overlayText}>Men</Text>
-        </View>
-      </TouchableOpacity>
-    </Link>
+      ))}
 
 
         </Animated.View>
@@ -119,13 +87,13 @@ const HomeScreen = () => {
           {sellers.length > 0 ? (
             sellers.map((seller, index) => (
               <Animated.View 
-                key={index} 
+                key={seller.id} 
                 style={styles.sellerBox} 
                 entering={FadeInUp.delay(index * 100).duration(500)}
               >
                 <TouchableOpacity>
                   <Animated.Image 
-                    source={{ uri: seller.image }} 
+                    source={{ uri: seller.image }}
                     style={styles.sellerImage} 
                     entering={FadeIn.duration(500)}
                   />

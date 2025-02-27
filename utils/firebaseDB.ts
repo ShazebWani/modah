@@ -1,122 +1,143 @@
 import { db } from "@/config/firebaseConfig";
 import { ref, set, push, get, remove, update } from "firebase/database";
+import { getAuth } from "firebase/auth";
+import { ProductType, SellerType } from "@/types/type";
 
-// Fetch regular products
+const auth = getAuth();
+
+/** Fetch all products */
 export const fetchProducts = async () => {
-    try {
-      const snapshot = await get(ref(db, "products"));
-      //console.log("Fetched Products:", snapshot.val()); // Debugging
-      return snapshot.exists() ? Object.values(snapshot.val()) : [];
-    } catch (error) {
-      //console.error("Error fetching products:", error);
+  try {
+    const snapshot = await get(ref(db, "products"));
+    if (!snapshot.exists()) {
+      console.log("No products found in Firebase");
       return [];
     }
-  };
-// Add a new product
-export const addProduct = async (product: any) => {
+
+    const productsData = snapshot.val();
+    console.log("🔥 Raw Products from Firebase:", productsData);
+
+    return Object.keys(productsData).map((key) => ({
+      id: key,
+      ...productsData[key],
+    }));
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return [];
+  }
+};
+
+
+/** Add a new product */
+export const addProduct = async (product: ProductType): Promise<void> => {
   const newProductRef = push(ref(db, "products"));
   await set(newProductRef, product);
 };
 
-// Update a product
-export const updateProduct = async (productId: string, updatedData: any) => {
+/** Update an existing product */
+export const updateProduct = async (productId: string, updatedData: Partial<ProductType>): Promise<void> => {
   await update(ref(db, `products/${productId}`), updatedData);
 };
 
-// Delete a product
-export const deleteProduct = async (productId: string) => {
+/** Delete a product */
+export const deleteProduct = async (productId: string): Promise<void> => {
   await remove(ref(db, `products/${productId}`));
 };
 
-// Fetch all sellers
-export const fetchSellers = async () => {
-    try {
-      const snapshot = await get(ref(db, "sellers"));
-      //console.log("Raw Firebase Data (Sellers):", snapshot.val()); // Debugging
-  
-      if (snapshot.exists()) {
-        return Object.entries(snapshot.val()).map(([key, value]) => ({
-          id: key,
-          ...(value as object),
-        }));
-      }
-      return [];
-    } catch (error) {
-      //console.error("Error fetching sellers:", error);
-      return [];
-    }
-  };
-  // Fetch sale products
-  export const fetchSaleProducts = async () => {
-    try {
-      const snapshot = await get(ref(db, "saleProducts"));
-      //console.log("Fetched Sale Products:", snapshot.val()); // Debugging
-      return snapshot.exists() ? Object.values(snapshot.val()) : [];
-    } catch (error) {
-      //console.error("Error fetching sale products:", error);
-      return [];
-    }
-  };
+/** Fetch all sellers */
+export const fetchSellers = async (): Promise<SellerType[]> => {
+  try {
+    const snapshot = await get(ref(db, "sellers"));
+    if (!snapshot.exists()) return [];
 
-  // Fetch product details by ID
-export const fetchProductDetails = async (id: string, productType: string) => {
-    try {
-      const path = productType === "sale" ? `saleProducts/${id}` : `products/${id}`;
-      const snapshot = await get(ref(db, path));
-  
-      //console.log(`Fetched Product (${id}):`, snapshot.val()); // Debugging
-  
-      return snapshot.exists() ? snapshot.val() : null;
-    } catch (error) {
-      //console.error("Error fetching product:", error);
-      return null;
-    }
-  };
+    const sellersData = snapshot.val() as Record<string, SellerType>;
+    
+    return Object.entries(sellersData).map(([id, seller]) => ({
+      ...seller,
+      id,
+    }));
+  } catch (error) {
+    console.error("Error fetching sellers:", error);
+    return [];
+  }
+};
 
-  // Fetch product notifications
-  export const fetchNotifications = async () => {
-    try {
-      const snapshot = await get(ref(db, "notifications"));
-  
-      if (!snapshot.exists()) {
-        console.error("No notifications found in Firebase.");
-        return [];
-      }
-  
-      const data = snapshot.val();
-      const notificationsArray = Object.keys(data).map((key) => ({
-        id: key,
-        ...data[key],
-      }));
-  
-      console.log("Final Notifications Data:", notificationsArray);
-      return notificationsArray;
-    } catch (error) {
-      console.error("Error fetching notifications:", error);
-      return [];
+
+/** Fetch product details by ID */
+export const fetchProductDetails = async (id: string): Promise<ProductType | null> => {
+  try {
+    const snapshot = await get(ref(db, `products/${id}`));
+    return snapshot.exists() ? (snapshot.val() as ProductType) : null;
+  } catch (error) {
+    console.error("Error fetching product details:", error);
+    return null;
+  }
+};
+
+/** Fetch all notifications */
+export const fetchNotifications = async (): Promise<Record<string, unknown>> => {
+  try {
+    const snapshot = await get(ref(db, "notifications"));
+    return snapshot.exists() ? snapshot.val() : {};
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+    return {};
+  }
+};
+
+/** Fetch current user's cart items */
+export const fetchCartItems = async (): Promise<Record<string, unknown>> => {
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      console.error("User not authenticated.");
+      return {};
     }
-  };
-  
-  // Fetch product notifications
-  export const fetchCartItems = async () => {
-    try {
-      const snapshot = await get(ref(db, "cart"));
-  
-      if (!snapshot.exists()) {
-        console.error("No cart items found in Firebase.");
-        return [];
-      }
-  
-      const data = snapshot.val();
-      const cartArray = Object.keys(data).map((key) => ({
+
+    const snapshot = await get(ref(db, `carts/${user.uid}/items`));
+    return snapshot.exists() ? snapshot.val() : {};
+  } catch (error) {
+    console.error("Error fetching cart items:", error);
+    return {};
+  }
+};
+
+/** Fetch "For You" products */
+export const fetchForYouProducts = async () => {
+  try {
+    const snapshot = await get(ref(db, "products"));
+    if (!snapshot.exists()) return [];
+    
+    const allProducts = snapshot.val();
+    return Object.keys(allProducts)
+      .filter((key) => allProducts[key].forYou === true)
+      .map((key) => ({
         id: key,
-        ...data[key],
+        ...allProducts[key],
       }));
-  
-      console.log("Final Cart Data:", cartArray);
-      return cartArray;
-    } catch (error) {
-      console.error("Error fetching cart items:", error);
-      return [];
-    }
-  };
+  } catch (error) {
+    console.error("Error fetching For You products:", error);
+    return [];
+  }
+};
+
+
+/** Fetch "Popular This Week" products */
+export const fetchPopularProducts = async () => {
+  try {
+    const snapshot = await get(ref(db, "products"));
+    if (!snapshot.exists()) return [];
+    
+    const allProducts = snapshot.val();
+    return Object.keys(allProducts)
+      .filter((key) => allProducts[key].popular === true)
+      .map((key) => ({
+        id: key,
+        ...allProducts[key],
+      }));
+  } catch (error) {
+    console.error("Error fetching Popular This Week products:", error);
+    return [];
+  }
+};
+

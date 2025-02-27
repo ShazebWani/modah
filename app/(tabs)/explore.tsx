@@ -10,35 +10,47 @@ import { Stack } from "expo-router";
 import Header from "@/components/Header";
 import ProductItem from "@/components/ProductItem";
 import Animated, { FadeIn } from "react-native-reanimated";
-import { fetchProducts, fetchSaleProducts } from "@/utils/firebaseDB";
+import { fetchForYouProducts, fetchPopularProducts } from "@/utils/firebaseDB";
+import { ProductType } from "@/types/type";
 
 const ExploreScreen = () => {
-  const [products, setProducts] = useState<any[]>([]);
-  const [popularProducts, setPopularProducts] = useState<any[]>([]);
+  const [forYouProducts, setForYouProducts] = useState<ProductType[]>([]);
+  const [popularProducts, setPopularProducts] = useState<ProductType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    loadProducts();
+    loadForYouProducts();
     loadPopularProducts();
   }, []);
 
-  const loadProducts = async () => {
-    const data = await fetchProducts();
-    console.log("Final Fetched Products:", data);
-    setProducts(data);
-    setIsLoading(false);
+  /** Fetch "For You" products */
+  const loadForYouProducts = async () => {
+    try {
+      const data = await fetchForYouProducts();
+      console.log("Fetched For You Products:", data);
+      setForYouProducts(Object.values(data)); // Convert object to array
+    } catch (error) {
+      console.error("Error loading For You products:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  /** Fetch "Popular This Week" products */
   const loadPopularProducts = async () => {
-    const data = await fetchSaleProducts();
-    console.log("Final Fetched Sale Products:", data);
-    setPopularProducts(data);
+    try {
+      const data = await fetchPopularProducts();
+      console.log("Fetched Popular Products:", data);
+      setPopularProducts(Object.values(data)); // Convert object to array
+    } catch (error) {
+      console.error("Error loading Popular products:", error);
+    }
   };
 
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size={"large"} />
+        <ActivityIndicator size="large" />
       </View>
     );
   }
@@ -52,6 +64,7 @@ const ExploreScreen = () => {
         }}
       />
       <View style={{ flex: 1, paddingBottom: 5 }}>
+        
         {/* Popular This Week */}
         <View style={{ marginBottom: 20 }}>
           <Text style={styles.sectionTitle}>Popular This Week</Text>
@@ -59,11 +72,11 @@ const ExploreScreen = () => {
             data={popularProducts}
             horizontal
             showsHorizontalScrollIndicator={false}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item) => item.id.toString()}
             contentContainerStyle={styles.flatListContainer}
             renderItem={({ item, index }) => (
               <Animated.View entering={FadeIn.duration(500)} style={styles.itemSpacing}>
-                <ProductItem item={item} index={index} productType="sale" />
+                <ProductItem item={item} index={index} productType="popular" />
               </Animated.View>
             )}
           />
@@ -73,13 +86,13 @@ const ExploreScreen = () => {
         <View>
           <Text style={styles.sectionTitle}>For You</Text>
           <FlatList
-            data={products}
+            data={forYouProducts}
             numColumns={2}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item) => item.id.toString()}
             contentContainerStyle={styles.flatListContainer}
             renderItem={({ item, index }) => (
               <Animated.View entering={FadeIn.duration(500)} style={styles.itemSpacing}>
-                <ProductItem item={item} index={index} productType="regular" />
+                <ProductItem item={item} index={index} productType="forYou" />
               </Animated.View>
             )}
             ListFooterComponent={<View style={{ height: 260 }} />}

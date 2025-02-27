@@ -1,36 +1,23 @@
 export interface ProductType {
-  rating: string;
-  id: number;
+  id: string;
   title: string;
-  price: number;
   description: string;
-  images: string[];
-  category: Category;
-}
-
-interface Category {
-  id: number;
-  name: string;
-  image: string;
-}
-
-export interface CategoryType {
-  id: number;
-  name: string;
-  image: string;
-}
-
-export interface NotificationType {
-  id: number;
-  title: string;
-  message: string;
-  timestamp: string;
-}
-
-export interface CartItemType {
-  id: number;
-  title: string;
   price: number;
-  quantity: number;
+  images: string[];
+  category: string;
+  mainCategory?: string;
+  sellerId: number;
+  stock: number;
+  inCarts: number;
+  forYou?: boolean;
+  popular?: boolean;
+}
+
+export interface SellerType {
+  id: string;
+  name: string;
+  location: string;
   image: string;
+  profilePic: string;
+  rating: number;
 }
