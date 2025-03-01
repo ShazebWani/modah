@@ -15,8 +15,8 @@ import { fetchSellers } from "@/utils/firebaseDB";
 import { SellerType } from "@/types/type";
 
 const categoryImages: Record<string, any> = {
-  Men: require("@/assets/images/men.jpg"),
-  Women: require("@/assets/images/women.jpg"),
+  Mens: require("@/assets/images/mens.jpg"),
+  Womens: require("@/assets/images/womens.jpg"),
   Kids: require("@/assets/images/kids.jpg"),
   Other: require("@/assets/images/other.jpg"),
 };
