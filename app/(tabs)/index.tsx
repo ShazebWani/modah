@@ -7,7 +7,7 @@ import {
   Image,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Link, Stack } from "expo-router";
+import { Link, router, Stack } from "expo-router";
 import Header from "@/components/Header";
 import { Colors } from "@/constants/Colors";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
@@ -65,19 +65,23 @@ const HomeScreen = () => {
         <Text style={styles.sectionTitle}>Categories</Text>
         <Animated.View style={styles.gridContainer} entering={FadeInUp.duration(700)}>
 
-        {["Men", "Women", "Kids", "Other"].map((category, index) => (
-        <TouchableOpacity key={category} style={styles.gridItem}>
-          <Animated.Image
-            source={categoryImages[category]}
-            style={styles.gridImage}
-            entering={FadeInUp.delay(100).duration(700)}
-          />
-          <View style={styles.overlay}>
-            <Text style={styles.overlayText}>{category}</Text>
-          </View>
-        </TouchableOpacity>
-      ))}
-
+        
+        {["Mens", "Womens", "Kids", "Other"].map((category) => (
+          <TouchableOpacity
+            key={category}
+            style={styles.gridItem}
+            onPress={() => router.push(`/explore?category=${category}`)}
+          >
+            <Animated.Image
+              source={categoryImages[category]}
+              style={styles.gridImage}
+              entering={FadeInUp.delay(100).duration(700)}
+            />
+            <View style={styles.overlay}>
+              <Text style={styles.overlayText}>{category}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
 
         </Animated.View>
 

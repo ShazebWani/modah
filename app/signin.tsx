@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
-import { Link, router, Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import InputField from "@/components/InputField";
 import SocialLoginButtons from "@/components/SocialLoginButtons";
 import { Ionicons } from "@expo/vector-icons";

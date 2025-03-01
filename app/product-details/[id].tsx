@@ -13,7 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import { useHeaderHeight } from "@react-navigation/elements";
 import Animated, { FadeInDown, SlideInDown } from "react-native-reanimated";
-import { fetchProductDetails } from "@/utils/firebaseDB";
+import { addToCart, fetchProductDetails } from "@/utils/firebaseDB";
 
 
 const ProductDetails = () => {
@@ -27,7 +27,7 @@ const ProductDetails = () => {
   }, []);
 
   const loadProduct = async () => {
-    const data = await fetchProductDetails(id as string, productType as string);
+    const data = await fetchProductDetails(id as string);
     console.log("Final Product Data:", data);
     setProduct(data);
   };
@@ -126,8 +126,10 @@ const ProductDetails = () => {
                 borderWidth: 1,
               },
             ]}
-            onPress={() => console.log("Added to Cart", product)}
-          >
+            onPress={() => {
+              console.log("🛒 Adding product:", product.id);
+              addToCart(product.id);
+            }} >
             <Ionicons name="cart-outline" size={20} color={Colors.primary} />
             <Text style={[styles.buttonText, { color: Colors.primary }]}>
               Add to Cart

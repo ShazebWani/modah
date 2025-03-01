@@ -8,6 +8,7 @@ export interface ProductType {
   mainCategory?: string;
   sellerId: number;
   stock: number;
+  rating: number;
   inCarts: number;
   forYou?: boolean;
   popular?: boolean;
@@ -21,3 +22,20 @@ export interface SellerType {
   profilePic: string;
   rating: number;
 }
+
+export interface CartItemType {
+  id: string;
+  productId: string;
+  quantity: number;
+  product: {
+    title: string;
+    price: number;
+    stock: number;
+    inCarts: number;
+    images: string[];
+  };
+  seller: {
+    profilePic: string;
+  };
+}
+
