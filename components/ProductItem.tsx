@@ -23,10 +23,13 @@ const width = Dimensions.get("window").width - 40;
 
 const ProductItem = ({ item, index, productType }: Props) => {
   return (
-    <Link href={{
-      pathname: '/product-details/[id]',
-      params: { id: item.id, productType: productType },
-    }} asChild>
+    <Link
+      href={{
+        pathname: '/product-details/[id]',
+        params: { id: item.id, productType: productType },
+      }}
+      asChild
+    >
       <TouchableOpacity>
         <Animated.View
           style={styles.container}

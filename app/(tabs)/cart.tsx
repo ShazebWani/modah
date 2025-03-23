@@ -12,9 +12,10 @@ import {
 import { Checkbox } from "react-native-paper";
 import { fetchCartItems, removeFromCart } from "@/utils/firebaseDB";
 import { getAuth } from "firebase/auth";
+import { ref, onValue, get } from "firebase/database";
+import { db } from "@/config/firebaseConfig";
 import { CartItemType } from "@/types/type";
 import { useRouter } from "expo-router";
-
 
 const CartScreen = () => {
   const router = useRouter();
@@ -27,6 +28,34 @@ const CartScreen = () => {
   useEffect(() => {
     if (user) {
       loadCartItems();
+      const cartRef = ref(db, `carts/${user.uid}/items`);
+      const unsubscribe = onValue(cartRef, async (snapshot) => {
+        if (snapshot.exists()) {
+          const cartData = snapshot.val();
+          const updatedCartItems = await Promise.all(
+            Object.entries(cartData).map(async ([cartId, cartItem]: any) => {
+              const productSnapshot = await get(ref(db, `products/${cartItem.productId}`));
+              const product = productSnapshot.exists() ? productSnapshot.val() : null;
+
+              const sellerSnapshot = await get(ref(db, `sellers/${product?.sellerId}`));
+              const seller = sellerSnapshot.exists() ? sellerSnapshot.val() : null;
+
+              return {
+                id: cartId,
+                productId: cartItem.productId,
+                quantity: cartItem.quantity,
+                product,
+                seller,
+              };
+            })
+          );
+          setCartItems(updatedCartItems);
+        } else {
+          setCartItems([]);
+        }
+      });
+
+      return () => unsubscribe();
     }
   }, [user]);
 
@@ -104,17 +133,23 @@ const CartScreen = () => {
               {cartItems.map((item) => (
                 <View key={item.id} style={styles.cartItem}>
                   {/* Seller Profile Pic */}
-                  <Image source={{ uri: item.seller.profilePic }} style={styles.sellerImage} />
+                  {item.seller && (
+                    <Image source={{ uri: item.seller.profilePic }} style={styles.sellerImage} />
+                  )}
 
                   {/* Price & Tax */}
-                  <View style={styles.priceContainer}>
-                    <Text>{item.product.inCarts} left</Text>
-                    <Text>${(item.product.price || 0).toFixed(2)}</Text>
-                    <Text style={styles.taxText}>+${((item.product.price || 0) * 0.05).toFixed(2)}</Text>
-                  </View>
+                  {item.product && (
+                    <View style={styles.priceContainer}>
+                      <Text>{item.product.inCarts} left</Text>
+                      <Text>${(item.product.price || 0).toFixed(2)}</Text>
+                      <Text style={styles.taxText}>+${((item.product.price || 0) * 0.05).toFixed(2)}</Text>
+                    </View>
+                  )}
 
                   {/* Product Image */}
-                  <Image source={{ uri: item.product.images[0] }} style={styles.productImage} />
+                  {item.product && (
+                    <Image source={{ uri: item.product.images[0] }} style={styles.productImage} />
+                  )}
 
                   {/* Placeholder for Seller Page */}
                   <TouchableOpacity style={styles.sellerButton}>

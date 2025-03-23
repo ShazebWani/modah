@@ -69,7 +69,9 @@ export const fetchSellers = async (): Promise<SellerType[]> => {
 export const fetchProductDetails = async (id: string): Promise<ProductType | null> => {
   try {
     const snapshot = await get(ref(db, `products/${id}`));
-    return snapshot.exists() ? (snapshot.val() as ProductType) : null;
+    const product = snapshot.exists() ? (snapshot.val() as ProductType) : null;
+    console.log("Fetched product details:", product); // Log the fetched product details
+    return product;
   } catch (error) {
     console.error("Error fetching product details:", error);
     return null;

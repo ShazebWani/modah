@@ -1,11 +1,5 @@
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ScrollView,
-} from "react-native";
 import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View, ScrollView } from "react-native";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { ProductType } from "@/types/type";
 import ImageSlider from "@/components/ImageSlider";
@@ -15,29 +9,28 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import Animated, { FadeInDown, SlideInDown } from "react-native-reanimated";
 import { addToCart, fetchProductDetails } from "@/utils/firebaseDB";
 
-
 const ProductDetails = () => {
-  const { id, productType } = useLocalSearchParams();
-  console.log("Product ID:", id, "Product Type:", productType); // Debugging
-
+  const { id } = useLocalSearchParams();
   const [product, setProduct] = useState<ProductType | null>(null);
 
   useEffect(() => {
-    loadProduct();
-  }, []);
+    if (id) {
+      loadProduct(id as string);
+    }
+  }, [id]);
 
-  const loadProduct = async () => {
-    const data = await fetchProductDetails(id as string);
-    console.log("Final Product Data:", data);
-    setProduct(data);
+  const loadProduct = async (productId: string) => {
+    console.log("Loading product with ID:", productId); // Log the product ID being loaded
+    const data = await fetchProductDetails(productId);
+    console.log("Loaded product data:", data); // Log the loaded product data
+    if (data) {
+      setProduct({ ...data, id: productId }); // Ensure the product ID is set
+    }
   };
 
   const headerHeight = useHeaderHeight();
 
-  
-
   return (
-    
     <>
       <Stack.Screen
         options={{
@@ -111,7 +104,6 @@ const ProductDetails = () => {
         )}
       </ScrollView>
 
-      {/* Bottom Pop-Up Actions */}
       {product && (
         <Animated.View
           style={styles.buttonWrapper}
@@ -127,9 +119,15 @@ const ProductDetails = () => {
               },
             ]}
             onPress={() => {
-              console.log("🛒 Adding product:", product.id);
-              addToCart(product.id);
-            }} >
+              console.log("Product ID:", product?.id); // Log the product ID
+              if (product?.id) {
+                console.log("🛒 Adding product:", product.id);
+                addToCart(product.id);
+              } else {
+                console.error("❌ Product ID is undefined.");
+              }
+            }}
+          >
             <Ionicons name="cart-outline" size={20} color={Colors.primary} />
             <Text style={[styles.buttonText, { color: Colors.primary }]}>
               Add to Cart
