@@ -36,6 +36,7 @@ export interface CartItemType {
   };
   seller: {
     profilePic: string;
+    name: string;
   };
 }
 

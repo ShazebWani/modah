@@ -16,18 +16,19 @@ import { ref, onValue, get } from "firebase/database";
 import { db } from "@/config/firebaseConfig";
 import { CartItemType } from "@/types/type";
 import { useRouter } from "expo-router";
+import { Colors } from "@/constants/Colors";
 
 const CartScreen = () => {
   const router = useRouter();
   const [cartItems, setCartItems] = useState<CartItemType[]>([]);
   const [selectedItems, setSelectedItems] = useState<Record<string, boolean>>({});
   const [isCartTab, setIsCartTab] = useState(true);
+  const [isEditMode, setIsEditMode] = useState(false);
   const auth = getAuth();
   const user = auth.currentUser;
 
   useEffect(() => {
     if (user) {
-      loadCartItems();
       const cartRef = ref(db, `carts/${user.uid}/items`);
       const unsubscribe = onValue(cartRef, async (snapshot) => {
         if (snapshot.exists()) {
@@ -44,8 +45,14 @@ const CartScreen = () => {
                 id: cartId,
                 productId: cartItem.productId,
                 quantity: cartItem.quantity,
-                product,
-                seller,
+                product: {
+                  ...product,
+                  title: product?.title, // Ensure title is included
+                },
+                seller: {
+                  profilePic: seller?.profilePic,
+                  name: seller?.name,
+                },
               };
             })
           );
@@ -59,12 +66,6 @@ const CartScreen = () => {
     }
   }, [user]);
 
-  const loadCartItems = async () => {
-    if (!user) return;
-    const data = await fetchCartItems();
-    setCartItems(data);
-  };
-
   const handleSelectItem = (itemId: string) => {
     setSelectedItems((prev) => ({
       ...prev,
@@ -72,19 +73,23 @@ const CartScreen = () => {
     }));
   };
 
-  const handleDeleteItem = (itemId: string) => {
+  const handleDeleteItems = () => {
     if (!user) return;
+    const itemsToDelete = Object.keys(selectedItems).filter((itemId) => selectedItems[itemId]);
     Alert.alert(
-      "Remove Item",
-      "Are you sure you want to remove this item from your cart?",
+      "Remove Items",
+      "Are you sure you want to remove the selected items from your cart?",
       [
         { text: "Cancel", style: "cancel" },
         {
           text: "Remove",
           style: "destructive",
           onPress: async () => {
-            await removeFromCart(itemId);
-            loadCartItems();
+            await Promise.all(itemsToDelete.map(async (itemId) => {
+              await removeFromCart(itemId);
+            }));
+            setCartItems((prevItems) => prevItems.filter((item) => !selectedItems[item.id]));
+            setSelectedItems({});
           },
         },
       ]
@@ -132,39 +137,41 @@ const CartScreen = () => {
             <ScrollView>
               {cartItems.map((item) => (
                 <View key={item.id} style={styles.cartItem}>
-                  {/* Seller Profile Pic */}
-                  {item.seller && (
-                    <Image source={{ uri: item.seller.profilePic }} style={styles.sellerImage} />
-                  )}
+                  {/* Top Row: Product Title and Seller Profile Pic */}
+                  <View style={styles.topRow}>
+                    <View style={styles.sellerInfo}>
+                      <Image source={{ uri: item.seller.profilePic }} style={styles.sellerImage} />
+                      <Text style={styles.productTitle} numberOfLines={1}>{item.product.title}</Text>
+                    </View>
+                  </View>
 
-                  {/* Price & Tax */}
-                  {item.product && (
+                  {/* Middle Row: Product Image, More Products Button, and Price */}
+                  <View style={styles.middleRow}>
+                    <View style={styles.imageContainer}>
+                      <Image source={{ uri: item.product.images[0] }} style={styles.productImage} />
+                      <TouchableOpacity style={styles.moreProductsButton}>
+                        <Text style={styles.moreProductsText}>More from seller</Text>
+                        <Text style={styles.moreProductsPlus}>+</Text>
+                      </TouchableOpacity>
+                    </View>
                     <View style={styles.priceContainer}>
                       <Text>{item.product.inCarts} left</Text>
                       <Text>${(item.product.price || 0).toFixed(2)}</Text>
                       <Text style={styles.taxText}>+${((item.product.price || 0) * 0.05).toFixed(2)}</Text>
                     </View>
-                  )}
+                  </View>
 
-                  {/* Product Image */}
-                  {item.product && (
-                    <Image source={{ uri: item.product.images[0] }} style={styles.productImage} />
-                  )}
-
-                  {/* Placeholder for Seller Page */}
-                  <TouchableOpacity style={styles.sellerButton}>
-                    <Text style={styles.plusText}>+</Text>
-                  </TouchableOpacity>
-
-                  {/* Select & Delete */}
-                  <View>
-                    <Checkbox
-                      status={selectedItems[item.id] ? "checked" : "unchecked"}
-                      onPress={() => handleSelectItem(item.id)}
-                    />
-                    <TouchableOpacity onPress={() => handleDeleteItem(item.id)}>
-                      <Text style={styles.deleteText}>❌</Text>
-                    </TouchableOpacity>
+                  {/* Bottom Row: In Carts Info and Checkbox */}
+                  <View style={styles.bottomRow}>
+                    <Text style={styles.inCartsText}>{item.product.inCarts} people have this in their carts</Text>
+                    {isEditMode && (
+                      <Checkbox
+                        status={selectedItems[item.id] ? "checked" : "unchecked"}
+                        onPress={() => handleSelectItem(item.id)}
+                        color={Colors.primary}
+                        uncheckedColor={Colors.primary}
+                      />
+                    )}
                   </View>
                 </View>
               ))}
@@ -174,12 +181,26 @@ const CartScreen = () => {
           <Text style={styles.placeholderText}>Implement Purchase Functionality Later</Text>
         )}
 
-        {/* Checkout Button */}
-        {Object.values(selectedItems).some(Boolean) && (
-          <TouchableOpacity style={styles.checkoutButton}>
-            <Text style={styles.checkoutText}>Checkout: ${calculateTotal()}</Text>
+        {/* Checkout and Edit/Delete Buttons */}
+        <View style={styles.actionButtons}>
+          {Object.values(selectedItems).some(Boolean) && (
+            <TouchableOpacity style={styles.checkoutButton}>
+              <Text style={styles.checkoutText}>Checkout: ${calculateTotal()}</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() => {
+              if (isEditMode) {
+                handleDeleteItems();
+              } else {
+                setIsEditMode(true);
+              }
+            }}
+          >
+            <Text style={styles.editText}>{isEditMode ? "Delete" : "Edit"}</Text>
           </TouchableOpacity>
-        )}
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -207,10 +228,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f2f2f2",
+    backgroundColor: Colors.extraLightGray,
   },
   activeTab: {
-    backgroundColor: "#000",
+    backgroundColor: Colors.primary,
   },
   tabDivider: {
     width: 1,
@@ -239,9 +260,21 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   cartItem: {
+    marginBottom: 15,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+  },
+  topRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  sellerInfo: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 15,
   },
   sellerImage: {
     width: 40,
@@ -249,12 +282,27 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginRight: 10,
   },
-  priceContainer: {
+  productTitle: {
+    fontSize: 14,
+    color: "#000",
     flex: 1,
+  },
+  priceContainer: {
+    alignItems: "flex-end",
   },
   taxText: {
     color: "gray",
     fontSize: 12,
+  },
+  middleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+    justifyContent: "space-between",
+  },
+  imageContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   productImage: {
     width: 70,
@@ -262,29 +310,62 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginRight: 10,
   },
-  sellerButton: {
-    width: 40,
-    height: 40,
-    backgroundColor: "#ccc",
+  moreProductsButton: {
+    width: 70,
+    height: 70,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 5,
   },
-  plusText: {
-    fontSize: 20,
-    fontWeight: "bold",
+  moreProductsText: {
+    fontSize: 10,
+    textAlign: "center",
   },
-  deleteText: {
-    color: "red",
+  moreProductsPlus: {
     fontSize: 20,
+    marginTop: -5,
+  },
+  bottomRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  inCartsText: {
+    fontSize: 14,
+    color: "gray",
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+  },
+  actionButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 10,
+    borderTopWidth: 1,
+    borderColor: "#ccc",
   },
   checkoutButton: {
-    backgroundColor: "green",
+    flex: 1,
+    backgroundColor: Colors.lightGray,
     padding: 10,
-    marginTop: 10,
     borderRadius: 5,
+    marginRight: 10,
   },
   checkoutText: {
+    color: "white",
+    fontSize: 18,
+    textAlign: "center",
+  },
+  editButton: {
+    backgroundColor: Colors.primary,
+    padding: 10,
+    borderRadius: 5,
+  },
+  editText: {
     color: "white",
     fontSize: 18,
     textAlign: "center",

@@ -126,6 +126,7 @@ const ProductDetails = () => {
               } else {
                 console.error("❌ Product ID is undefined.");
               }
+              router.navigate("/cart");
             }}
           >
             <Ionicons name="cart-outline" size={20} color={Colors.primary} />
