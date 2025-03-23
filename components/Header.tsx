@@ -38,9 +38,12 @@ const styles = StyleSheet.create({
     gap: 15,
   },
   logo: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: Colors.primary,
+    fontSize: 40, // Updated font size to match the one in index.tsx
+    color: Colors.gray,
+    fontWeight: "600",
+    letterSpacing: 2.4,
+    fontFamily: 'Cochin',
+    fontStyle: 'italic',
   },
   searchBar: {
     flex: 1,

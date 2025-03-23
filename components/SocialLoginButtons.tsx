@@ -62,13 +62,13 @@ const SocialLoginButtons = (props: Props) => {
         </TouchableOpacity>
       </Animated.View>
 
-      {/* Uncomment this when we're ready to add Apple Sign-In */}
-      {/* <Animated.View entering={FadeInDown.delay(1100).duration(500)}>
+      <Animated.View entering={FadeInDown.delay(1100).duration(500)}>
         <TouchableOpacity style={styles.button}>
           <Ionicons name="logo-apple" size={20} color={Colors.black} />
           <Text style={styles.btnTxt}>Continue with Apple</Text>
         </TouchableOpacity>
-      </Animated.View> */}
+      </Animated.View>
+      
     </View>
   );
 };
