@@ -1,8 +1,12 @@
 import React from 'react';
 import { Tabs } from "expo-router";
 import { TabBar } from '@/components/TabBar';
+import { useFonts } from 'expo-font';
 
 export default function TabLayout() {
+  const [loaded] = useFonts({
+      SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
+    });
   return (
     <Tabs tabBar={props => <TabBar {...props} />} screenOptions={{headerShown: false}}>
       <Tabs.Screen name='index' options={{

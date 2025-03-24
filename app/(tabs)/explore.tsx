@@ -12,6 +12,7 @@ import ProductItem from "@/components/ProductItem";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { fetchForYouProducts, fetchPopularProducts, fetchProducts } from "@/utils/firebaseDB";
 import { ProductType } from "@/types/type";
+import TabScreenWrapper from '@/components/TabScreenWrapper';
 
 const ExploreScreen = () => {
   const { category } = useLocalSearchParams(); // Get category from URL
@@ -66,7 +67,7 @@ const ExploreScreen = () => {
   }
 
   return (
-    <>
+    <TabScreenWrapper>
       <Stack.Screen
         options={{
           headerShown: true,
@@ -111,7 +112,7 @@ const ExploreScreen = () => {
           />
         </View>
       </View>
-    </>
+    </TabScreenWrapper>
   );
 };
 

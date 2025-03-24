@@ -13,6 +13,7 @@ import { Colors } from "@/constants/Colors";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 import { fetchSellers } from "@/utils/firebaseDB";
 import { SellerType } from "@/types/type";
+import TabScreenWrapper from '@/components/TabScreenWrapper';
 
 const categoryImages: Record<string, any> = {
   Mens: require("@/assets/images/mens.jpg"),
@@ -36,86 +37,88 @@ const HomeScreen = () => {
   }, []);
 
   return (
-    <>
-      <Stack.Screen options={{ headerShown: true, header: () => <Header /> }} />
-      <ScrollView>
+    <TabScreenWrapper>
+      <>
+        <Stack.Screen options={{ headerShown: true, header: () => <Header /> }} />
+        <ScrollView>
 
-        {/* Shop By Price */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <Animated.View style={styles.shopByPriceContainer} entering={FadeInUp.duration(500)}>
-            {["Under $10", "Under $20", "Under $50", "Under $100"].map((label, index) => (
-              <Animated.View key={index} entering={FadeInUp.delay(index * 100).duration(500)}>
-                <TouchableOpacity style={styles.priceButton}>
-                  <Text style={styles.priceButtonText}>{label}</Text>
-                </TouchableOpacity>
-              </Animated.View>
-            ))}
-          </Animated.View>
-        </ScrollView>
-
-        {/* Theme */}
-        <Animated.View style={styles.bannerContainer} entering={FadeIn.duration(700)}>
-          <Image
-            source={require("@/assets/images/theme.png")}
-            style={styles.bannerImage}
-          />
-        </Animated.View>
-
-        {/* Categories */}
-        <Text style={styles.sectionTitle}>Categories</Text>
-        <Animated.View style={styles.gridContainer} entering={FadeInUp.duration(700)}>
-
-        
-        {["Mens", "Womens", "Kids", "Other"].map((category) => (
-          <TouchableOpacity
-            key={category}
-            style={styles.gridItem}
-            onPress={() => router.push(`/explore?category=${category}`)}
-          >
-            <Animated.Image
-              source={categoryImages[category]}
-              style={styles.gridImage}
-              entering={FadeInUp.delay(100).duration(700)}
-            />
-            <View style={styles.overlay}>
-              <Text style={styles.overlayText}>{category}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-
-        </Animated.View>
-
-        {/* Sellers to Watch */}
-        <Text style={styles.sectionTitle}>Sellers to Watch</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.sellersContainer}>
-          {sellers.length > 0 ? (
-            sellers.map((seller, index) => (
-              <Animated.View 
-                key={seller.id} 
-                style={styles.sellerBox} 
-                entering={FadeInUp.delay(index * 100).duration(500)}
-              >
-                <TouchableOpacity>
-                  <Animated.Image 
-                    source={{ uri: seller.image }}
-                    style={styles.sellerImage} 
-                    entering={FadeIn.duration(500)}
-                  />
-                  <View style={styles.overlay}>
-                    <Text style={styles.overlayText}>{seller.name}</Text>
-                  </View>
-                </TouchableOpacity>
-              </Animated.View>
-            ))
-          ) : (
-            <Animated.View entering={FadeIn.duration(500)}>
-              <Text style={styles.noSellersText}>No sellers available</Text>
+          {/* Shop By Price */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <Animated.View style={styles.shopByPriceContainer} entering={FadeInUp.duration(500)}>
+              {["Under $10", "Under $20", "Under $50", "Under $100"].map((label, index) => (
+                <Animated.View key={index} entering={FadeInUp.delay(index * 100).duration(500)}>
+                  <TouchableOpacity style={styles.priceButton}>
+                    <Text style={styles.priceButtonText}>{label}</Text>
+                  </TouchableOpacity>
+                </Animated.View>
+              ))}
             </Animated.View>
-          )}
-        </ScrollView>
+          </ScrollView>
 
-      </ScrollView>
-    </>
+          {/* Theme */}
+          <Animated.View style={styles.bannerContainer} entering={FadeIn.duration(700)}>
+            <Image
+              source={require("@/assets/images/theme.png")}
+              style={styles.bannerImage}
+            />
+          </Animated.View>
+
+          {/* Categories */}
+          <Text style={styles.sectionTitle}>Categories</Text>
+          <Animated.View style={styles.gridContainer} entering={FadeInUp.duration(700)}>
+
+          
+          {["Mens", "Womens", "Kids", "Other"].map((category) => (
+            <TouchableOpacity
+              key={category}
+              style={styles.gridItem}
+              onPress={() => router.push(`/explore?category=${category}`)}
+            >
+              <Animated.Image
+                source={categoryImages[category]}
+                style={styles.gridImage}
+                entering={FadeInUp.delay(100).duration(700)}
+              />
+              <View style={styles.overlay}>
+                <Text style={styles.overlayText}>{category}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+
+          </Animated.View>
+
+          {/* Sellers to Watch */}
+          <Text style={styles.sectionTitle}>Sellers to Watch</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.sellersContainer}>
+            {sellers.length > 0 ? (
+              sellers.map((seller, index) => (
+                <Animated.View 
+                  key={seller.id} 
+                  style={styles.sellerBox} 
+                  entering={FadeInUp.delay(index * 100).duration(500)}
+                >
+                  <TouchableOpacity>
+                    <Animated.Image 
+                      source={{ uri: seller.image }}
+                      style={styles.sellerImage} 
+                      entering={FadeIn.duration(500)}
+                    />
+                    <View style={styles.overlay}>
+                      <Text style={styles.overlayText}>{seller.name}</Text>
+                    </View>
+                  </TouchableOpacity>
+                </Animated.View>
+              ))
+            ) : (
+              <Animated.View entering={FadeIn.duration(500)}>
+                <Text style={styles.noSellersText}>No sellers available</Text>
+              </Animated.View>
+            )}
+          </ScrollView>
+
+        </ScrollView>
+      </>
+    </TabScreenWrapper>
   );
 };
 

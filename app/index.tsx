@@ -19,7 +19,7 @@ const WelcomeScreen = (props: Props) => {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <LinearGradient
-        colors={['#f3e5f5', '#ffffff']} // Light purple to white gradient
+        colors={['#f3e5f5', '#ffffff']}
         style={{ flex: 1 }}
       >
         <View style={{ flex: 1, marginTop: 30 }}>

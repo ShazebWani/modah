@@ -14,8 +14,11 @@ import { getAuth } from "firebase/auth";
 import { ref, onValue, get } from "firebase/database";
 import { db } from "@/config/firebaseConfig";
 import { CartItemType } from "@/types/type";
-import { useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
+import Header from "@/components/Header";
+import TabScreenWrapper from '@/components/TabScreenWrapper';
+import { FontAwesome } from '@expo/vector-icons';
 
 const CartScreen = () => {
   const router = useRouter();
@@ -102,16 +105,21 @@ const CartScreen = () => {
 
   const calculateTotal = () => {
     return cartItems
-      .filter((item) => selectedItems[item.id])
       .reduce((acc, item) => acc + ((item.product.price || 0) * 1.05), 0)
       .toFixed(2);
   };
 
   return (
+    <>
+    <Stack.Screen
+        options={{
+          headerShown: true,
+          header: () => <Header />,
+        }}
+      />
+    <TabScreenWrapper>
     <SafeAreaView style={styles.safeContainer}>
-      <View style={styles.container}>
-        {/* New Tab UI */}
-        <View style={styles.tabs}>
+      <View style={styles.tabs}>
           <TouchableOpacity
             style={[styles.tabButton, isCartTab && styles.activeTab]}
             onPress={() => setIsCartTab(true)}
@@ -128,7 +136,7 @@ const CartScreen = () => {
             <Text style={[styles.tabText, !isCartTab && styles.activeText]}>Purchases</Text>
           </TouchableOpacity>
         </View>
-
+      <View style={styles.container}>
         {isCartTab ? (
           cartItems.length === 0 ? (
             <View style={styles.emptyContainer}>
@@ -171,7 +179,7 @@ const CartScreen = () => {
                       </TouchableOpacity>
                     </View>
                     <View style={styles.priceContainer}>
-                      <Text>{item.product.inCarts} left</Text>
+                      <Text style={styles.leftText}>{item.product.inCarts} left</Text>
                       <Text>${(item.product.price || 0).toFixed(2)}</Text>
                       <Text style={styles.taxText}>+${((item.product.price || 0) * 0.05).toFixed(2)}</Text>
                     </View>
@@ -191,11 +199,9 @@ const CartScreen = () => {
 
         {/* Checkout and Edit/Delete Buttons */}
         <View style={styles.actionButtons}>
-          {Object.values(selectedItems).some(Boolean) && (
-            <TouchableOpacity style={styles.checkoutButton}>
-              <Text style={styles.checkoutText}>Checkout: ${calculateTotal()}</Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity style={styles.checkoutButton}>
+            <Text style={styles.checkoutText}>Checkout: ${isEditMode ? calculateTotal() : calculateTotal()}</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.editButton}
             onPress={() => {
@@ -210,7 +216,7 @@ const CartScreen = () => {
               }
             }}
           >
-            <Text style={styles.editText}>{isEditMode ? "Delete" : "Edit"}</Text>
+            <FontAwesome name={isEditMode ? "trash" : "pencil"} size={24} color="white" />
           </TouchableOpacity>
           {isEditMode && (
             <TouchableOpacity
@@ -220,12 +226,14 @@ const CartScreen = () => {
                 setSelectedItems({});
               }}
             >
-              <Text style={styles.cancelText}>Cancel</Text>
+              <FontAwesome name="times" size={24} color="white" />
             </TouchableOpacity>
           )}
         </View>
       </View>
     </SafeAreaView>
+    </TabScreenWrapper>
+    </>
   );
 };
 
@@ -237,13 +245,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    marginTop: -10,
   },
   tabs: {
     flexDirection: "row",
-    borderRadius: 10,
+    borderRadius: 2,
     overflow: "hidden",
-    marginBottom: 15,
-    height: 45,
+    marginBottom: 5,
+    height: 60,
     borderWidth: 1,
     borderColor: "#ccc",
   },
@@ -262,7 +271,7 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontSize: 16,
-    color: "#555",
+    color: Colors.gray,
   },
   activeText: {
     color: "white",
@@ -322,8 +331,13 @@ const styles = StyleSheet.create({
   priceContainer: {
     alignItems: "flex-end",
   },
+  leftText: {
+    color: Colors.primary,
+    fontSize: 14,
+    marginBottom: 10,
+  },
   taxText: {
-    color: "gray",
+    color: Colors.gray,
     fontSize: 12,
   },
   middleRow: {
@@ -337,16 +351,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   productImage: {
-    width: 70,
-    height: 70,
+    width: 80,
+    height: 80,
     borderRadius: 10,
     marginRight: 10,
   },
   moreProductsButton: {
-    width: 70,
-    height: 70,
+    width: 80,
+    height: 80,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: Colors.lightGray,
+    borderStyle: "dashed",
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
@@ -361,7 +376,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   inCartsText: {
-    fontSize: 14,
+    fontSize: 12,
     color: "gray",
   },
   actionButtons: {
@@ -374,7 +389,7 @@ const styles = StyleSheet.create({
   },
   checkoutButton: {
     flex: 1,
-    backgroundColor: Colors.lightGray,
+    backgroundColor: Colors.primary,
     padding: 10,
     borderRadius: 5,
     marginRight: 10,
@@ -385,24 +400,19 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   editButton: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.lightPurple,
     padding: 10,
     borderRadius: 5,
-  },
-  editText: {
-    color: "white",
-    fontSize: 18,
-    textAlign: "center",
+    alignItems: "center",
+    justifyContent: "center",
   },
   cancelButton: {
-    backgroundColor: "red",
+    backgroundColor: Colors.lightGray,
     padding: 10,
     borderRadius: 5,
-  },
-  cancelText: {
-    color: "white",
-    fontSize: 18,
-    textAlign: "center",
+    marginLeft: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
   placeholderText: {
     fontSize: 16,

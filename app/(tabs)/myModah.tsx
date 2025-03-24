@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { fetchNotifications } from "@/utils/firebaseDB"; // Import Firebase function
+import TabScreenWrapper from '@/components/TabScreenWrapper';
 
 const myModahScreen = () => {
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
@@ -23,7 +24,7 @@ const myModahScreen = () => {
 
   const headerHeight = useHeaderHeight();
   return (
-    <>
+    <TabScreenWrapper>
       <Stack.Screen options={{ headerShown: true, headerTransparent: true }} />
       <View style={[styles.container, { marginTop: headerHeight }]}>
         <FlatList
@@ -60,7 +61,7 @@ const myModahScreen = () => {
           )}
         />
       </View>
-    </>
+    </TabScreenWrapper>
   );
 };
 

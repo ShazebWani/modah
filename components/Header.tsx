@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     gap: 15,
   },
   logo: {
-    fontSize: 40, // Updated font size to match the one in index.tsx
+    fontSize: 40,
     color: Colors.gray,
     fontWeight: "600",
     letterSpacing: 2.4,

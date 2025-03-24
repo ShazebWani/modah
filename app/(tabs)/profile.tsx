@@ -4,6 +4,7 @@ import { Stack } from "expo-router";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
+import TabScreenWrapper from '@/components/TabScreenWrapper';
 
 type Props = {};
 
@@ -11,7 +12,7 @@ const ProfileScreen = (props: Props) => {
   const headerHeight = useHeaderHeight();
 
   return (
-    <>
+    <TabScreenWrapper>
       <Stack.Screen options={{ headerShown: true, headerTransparent: true }} />
       <View style={[styles.container, {marginTop: headerHeight}]}>
         <View style={{alignItems: 'center'}}>
@@ -54,7 +55,7 @@ const ProfileScreen = (props: Props) => {
           </TouchableOpacity>
         </View>
       </View>
-    </>
+    </TabScreenWrapper>
   );
 };
 

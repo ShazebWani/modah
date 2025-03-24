@@ -42,7 +42,7 @@ const ProductDetails = () => {
             </TouchableOpacity>
           ),
           headerRight: () => (
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.navigate("/cart")}>
               <Ionicons name="cart-outline" size={24} color={Colors.black} />
             </TouchableOpacity>
           ),
