@@ -9,8 +9,7 @@ import {
   Alert,
   SafeAreaView,
 } from "react-native";
-import { Checkbox } from "react-native-paper";
-import { fetchCartItems, removeFromCart } from "@/utils/firebaseDB";
+import { removeFromCart } from "@/utils/firebaseDB";
 import { getAuth } from "firebase/auth";
 import { ref, onValue, get } from "firebase/database";
 import { db } from "@/config/firebaseConfig";
@@ -67,10 +66,15 @@ const CartScreen = () => {
   }, [user]);
 
   const handleSelectItem = (itemId: string) => {
-    setSelectedItems((prev) => ({
-      ...prev,
-      [itemId]: !prev[itemId],
-    }));
+    setSelectedItems((prev) => {
+      const newSelectedItems = { ...prev };
+      if (newSelectedItems[itemId]) {
+        delete newSelectedItems[itemId];
+      } else {
+        newSelectedItems[itemId] = true;
+      }
+      return newSelectedItems;
+    });
   };
 
   const handleDeleteItems = () => {
@@ -136,7 +140,17 @@ const CartScreen = () => {
           ) : (
             <ScrollView>
               {cartItems.map((item) => (
-                <View key={item.id} style={styles.cartItem}>
+                <TouchableOpacity
+                  key={item.id}
+                  style={[
+                    styles.cartItem,
+                    isEditMode && styles.editMode,
+                    selectedItems[item.id] && styles.selectedItem,
+                    !isEditMode && styles.noBorder,
+                  ]}
+                  onPress={() => isEditMode && handleSelectItem(item.id)}
+                  activeOpacity={isEditMode ? 1 : 0}
+                >
                   {/* Top Row: Product Title and Seller Profile Pic */}
                   <View style={styles.topRow}>
                     <View style={styles.sellerInfo}>
@@ -148,10 +162,12 @@ const CartScreen = () => {
                   {/* Middle Row: Product Image, More Products Button, and Price */}
                   <View style={styles.middleRow}>
                     <View style={styles.imageContainer}>
-                      <Image source={{ uri: item.product.images[0] }} style={styles.productImage} />
+                      <TouchableOpacity onPress={() => router.push(`/product-details/${item.productId}`)}>
+                        <Image source={{ uri: item.product.images[0] }} style={styles.productImage} />
+                      </TouchableOpacity>
                       <TouchableOpacity style={styles.moreProductsButton}>
-                        <Text style={styles.moreProductsText}>More from seller</Text>
-                        <Text style={styles.moreProductsPlus}>+</Text>
+                        <Text style={styles.moreProductsText}>Explore More</Text>
+                        <Text style={styles.moreProductsText}>+</Text>
                       </TouchableOpacity>
                     </View>
                     <View style={styles.priceContainer}>
@@ -161,19 +177,11 @@ const CartScreen = () => {
                     </View>
                   </View>
 
-                  {/* Bottom Row: In Carts Info and Checkbox */}
+                  {/* Bottom Row: In Carts Info */}
                   <View style={styles.bottomRow}>
                     <Text style={styles.inCartsText}>{item.product.inCarts} people have this in their carts</Text>
-                    {isEditMode && (
-                      <Checkbox
-                        status={selectedItems[item.id] ? "checked" : "unchecked"}
-                        onPress={() => handleSelectItem(item.id)}
-                        color={Colors.primary}
-                        uncheckedColor={Colors.primary}
-                      />
-                    )}
                   </View>
-                </View>
+                </TouchableOpacity>
               ))}
             </ScrollView>
           )
@@ -192,6 +200,10 @@ const CartScreen = () => {
             style={styles.editButton}
             onPress={() => {
               if (isEditMode) {
+                if (Object.keys(selectedItems).length === 0) {
+                  Alert.alert("No items selected", "Please select items to delete.");
+                  return;
+                }
                 handleDeleteItems();
               } else {
                 setIsEditMode(true);
@@ -200,6 +212,17 @@ const CartScreen = () => {
           >
             <Text style={styles.editText}>{isEditMode ? "Delete" : "Edit"}</Text>
           </TouchableOpacity>
+          {isEditMode && (
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => {
+                setIsEditMode(false);
+                setSelectedItems({});
+              }}
+            >
+              <Text style={styles.cancelText}>Cancel</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </SafeAreaView>
@@ -266,6 +289,15 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 10,
   },
+  noBorder: {
+    borderWidth: 0,
+  },
+  editMode: {
+    borderColor: Colors.primary,
+  },
+  selectedItem: {
+    backgroundColor: Colors.lightPurple,
+  },
   topRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -320,12 +352,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   moreProductsText: {
-    fontSize: 10,
+    fontSize: 12,
     textAlign: "center",
-  },
-  moreProductsPlus: {
-    fontSize: 20,
-    marginTop: -5,
   },
   bottomRow: {
     flexDirection: "row",
@@ -335,10 +363,6 @@ const styles = StyleSheet.create({
   inCartsText: {
     fontSize: 14,
     color: "gray",
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
   },
   actionButtons: {
     flexDirection: "row",
@@ -366,6 +390,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   editText: {
+    color: "white",
+    fontSize: 18,
+    textAlign: "center",
+  },
+  cancelButton: {
+    backgroundColor: "red",
+    padding: 10,
+    borderRadius: 5,
+  },
+  cancelText: {
     color: "white",
     fontSize: 18,
     textAlign: "center",
