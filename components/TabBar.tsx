@@ -1,7 +1,6 @@
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
-  Text,
-  TouchableOpacity,
   StyleSheet,
   LayoutChangeEvent,
 } from "react-native";
@@ -13,11 +12,12 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { useEffect, useState } from "react";
+
+export const tabBarRef = React.createRef<{ setTabIndex: (index: number) => void }>();
 
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const [dimensions, setDimensions] = useState({ height: 20, width: 100 });
-
+  const tabPositionX = useSharedValue(0);
   const buttonWidth = dimensions.width / state.routes.length;
 
   useEffect(() => {
@@ -33,13 +33,19 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     });
   };
 
-  const tabPositionX = useSharedValue(0);
-
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [{ translateX: tabPositionX.value }],
     };
   });
+
+  const setTabIndex = (index: number) => {
+    navigation.navigate(state.routes[index].name);
+  };
+
+  useEffect(() => {
+    tabBarRef.current = { setTabIndex };
+  }, [setTabIndex]);
 
   return (
     <View onLayout={onTabBarLayout} style={styles.tabbar}>
@@ -72,7 +78,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
           });
 
           if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name, route.params);
+            setTabIndex(index);
           }
         };
 

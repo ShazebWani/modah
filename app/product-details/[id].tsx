@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View, ScrollView } from "react-native";
-import { router, Stack, useLocalSearchParams } from "expo-router";
+import { Link, router, Stack, useLocalSearchParams } from "expo-router";
 import { ProductType } from "@/types/type";
 import ImageSlider from "@/components/ImageSlider";
 import { Ionicons } from "@expo/vector-icons";
@@ -8,6 +8,7 @@ import { Colors } from "@/constants/Colors";
 import { useHeaderHeight } from "@react-navigation/elements";
 import Animated, { FadeInDown, SlideInDown } from "react-native-reanimated";
 import { addToCart, fetchProductDetails } from "@/utils/firebaseDB";
+import { tabBarRef } from "@/components/TabBar";
 
 const ProductDetails = () => {
   const { id } = useLocalSearchParams();
@@ -42,9 +43,13 @@ const ProductDetails = () => {
             </TouchableOpacity>
           ),
           headerRight: () => (
-            <TouchableOpacity onPress={() => router.navigate("/cart")}>
-              <Ionicons name="cart-outline" size={24} color={Colors.black} />
-            </TouchableOpacity>
+            <Link href={'/cart'} asChild>
+              <TouchableOpacity onPress={() => {
+                tabBarRef.current?.setTabIndex(2); // Assuming the cart tab is at index 2
+              }}>
+                <Ionicons name="cart-outline" size={24} color={Colors.black} />
+              </TouchableOpacity>
+            </Link>
           ),
         }}
       />
@@ -126,6 +131,7 @@ const ProductDetails = () => {
               } else {
                 console.error("❌ Product ID is undefined.");
               }
+              tabBarRef.current?.setTabIndex(2); // Assuming the cart tab is at index 2
               router.navigate("/cart");
             }}
           >

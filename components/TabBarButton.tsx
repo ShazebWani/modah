@@ -20,14 +20,16 @@ const TabBarButton = (props: Props) => {
       onLongPress={onLongPress}
       style={styles.tabbarBtn}
     >
+      {/*
       {routeName == "cart" && (
-        // Cart Badge is Here
-        <View style={styles.badgeWrapper}>
-          <Text style={styles.badgeText}>3</Text>
-        </View>
+      // Cart Badge is Here
+      <View style={styles.badgeWrapper}>
+        <Text style={styles.badgeText}>3</Text>
+      </View>
       )}
+      */}
       {icon[routeName]({
-        color: isFocused ? Colors.primary : Colors.black,
+      color: isFocused ? Colors.primary : Colors.black,
       })}
       <Text style={{fontSize: 12, fontWeight: '400', color: isFocused ? "#673ab7" : "#222" }}>{label}</Text>
     </Pressable>
