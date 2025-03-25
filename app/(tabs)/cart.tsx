@@ -199,9 +199,9 @@ const CartScreen = () => {
 
         {/* Checkout and Edit/Delete Buttons */}
         <View style={styles.actionButtons}>
-          <TouchableOpacity style={styles.checkoutButton}>
-            <Text style={styles.checkoutText}>Checkout: ${isEditMode ? calculateTotal() : calculateTotal()}</Text>
-          </TouchableOpacity>
+        <TouchableOpacity style={styles.checkoutButton} onPress={() => router.push('/orders/order_purchased')}>
+          <Text style={styles.checkoutText}>Checkout: ${calculateTotal()}</Text>
+        </TouchableOpacity>
           <TouchableOpacity
             style={styles.editButton}
             onPress={() => {
